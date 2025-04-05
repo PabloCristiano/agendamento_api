@@ -4,6 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Servico;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class ServicoController extends Controller
 {
@@ -12,7 +23,11 @@ class ServicoController extends Controller
      */
     public function index()
     {
-        //
+        $servico = Servico::all();
+        return response()->json([
+            'data' => $servico,
+            'message' => 'Serviços listados com sucesso.'
+        ]);
     }
 
     /**
@@ -28,15 +43,72 @@ class ServicoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        
+        $servico = new Servico();
+       
+        $servico->servico = $request->input('servico');
+        $servico->tempo = $request->input('tempo');
+        $servico->valor = $request->input('valor');
+        $servico->comissao = $request->input('comissao');
+
+        $rules = [
+            'servico' => ['required', 'string', 'max:255', Rule::unique('servicos', 'servico')],
+            'tempo' => 'required|integer|min:1',
+            'valor' => 'required|numeric|min:0',
+            'comissao' => 'required|numeric|min:0|max:100',
+        ];
+
+        $messages = [
+            'servico.required' => 'O campo serviço é obrigatório.',
+            'servico.string' => 'O campo serviço deve ser uma string.',
+            'servico.max' => 'O campo serviço deve ter no máximo 255 caracteres.',
+            'servico.unique' => 'O serviço informado já está cadastrado.',
+            'tempo.required' => 'O campo tempo é obrigatório.',
+            'tempo.integer' => 'O campo tempo deve ser um número inteiro.',
+            'tempo.min' => 'O campo tempo deve ser no mínimo 1.',
+            'valor.required' => 'O campo valor é obrigatório.',
+            'valor.numeric' => 'O campo valor deve ser um número.',
+            'valor.min' => 'O campo valor deve ser no mínimo 0.',
+            'comissao.required' => 'O campo comissão é obrigatório.',
+            'comissao.numeric' => 'O campo comissão deve ser um número.',
+            'comissao.min' => 'O campo comissão deve ser no mínimo 0.',
+            'comissao.max' => 'O campo comissão deve ser no máximo 100.',
+        ];
+
+        // Validação dos dados
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // Verifica se a validação falhou
+        if ($validator->fails()) {
+            return response()->json([
+            'mensagem' => 'Erro de validação.',
+            'erros' => $validator->errors(),
+            'status' => false
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $servico->save();
+
+        return response()->json([
+            'mensagem' => 'Serviço cadastrado com sucesso!',
+            'status' => true
+        ]);
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Servico $servico)
-    {
-        //
+    public function show($id)
+    {    
+        $servico = Servico::find($id);
+
+        if (!$servico) {
+            return response()->json(['message' => 'Serviço não encontrado'], 404);
+        }
+
+        return response()->json($servico);
     }
 
     /**
@@ -44,7 +116,10 @@ class ServicoController extends Controller
      */
     public function edit(Servico $servico)
     {
-        //
+        return response()->json([
+            'data' => $servico,
+            'message' => 'Dados para edição carregados com sucesso.'
+        ]); 
     }
 
     /**
@@ -52,14 +127,36 @@ class ServicoController extends Controller
      */
     public function update(Request $request, Servico $servico)
     {
-        //
+       
+        $validated = $request->validate([
+            'servico' => 'required|string|max:255',
+            'tempo' => 'required|integer|min:1',
+            'valor' => 'required|numeric',
+            'comissao' => 'required|numeric'
+        ]);
+    
+        $servico->update($validated);
+    
+        return response()->json([
+            'message' => 'Serviço atualizado com sucesso!',
+            'data' => $servico
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Servico $servico)
+    public function destroy($id)
     {
-        //
+        $servico = Servico::find($id);
+
+        if (!$servico) {
+            return response()->json(['message' => 'Serviço não encontrado'], 404);
+        }
+
+        $servico->delete();
+        return response()->json([
+            'message' => 'Serviço deletado com sucesso.'
+        ]);
     }
 }

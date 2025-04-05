@@ -10,12 +10,17 @@ use App\Http\Controllers\PaisesController;
 
 
 
-Route::post('/clientes', [ClienteController::class, 'store']);
-Route::post('/profissionais', [ProfissionalController::class, 'store']);
-Route::post('/servicos', [ServicoController::class, 'store']);
-Route::post('/agendamentos', [AgendamentoController::class, 'store']);
-Route::post('/paises', [PaisesController::class, 'store']);
-Route::get('/paises', [PaisesController::class, 'listarPaises']);
+// Route::post('/clientes', [ClienteController::class, 'store']);
+// Route::post('/profissionais', [ProfissionalController::class, 'store']);
+// Route::post('/servicos', [ServicoController::class, 'store']);
+// Route::get('/servicos/{id}', [ServicoController::class, 'show']);
+// Route::apiResource('servicos', ServicoController::class);
+
+Route::resource('servicos', ServicoController::class);
+
+// Route::post('/agendamentos', [AgendamentoController::class, 'store']);
+// Route::post('/paises', [PaisesController::class, 'store']);
+// Route::get('/paises', [PaisesController::class, 'listarPaises']);
 
 
 

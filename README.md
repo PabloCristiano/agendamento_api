@@ -64,3 +64,25 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## Postman
+
+<!-- 
+API Endpoints for Service Management:
+
+1. Store (POST): Create a new service.
+    Endpoint: http://localhost:8000/api/servicos
+
+2. Show (GET): Retrieve details of a specific service by its ID.
+    Endpoint: http://localhost:8000/api/servicos/{id}
+
+3. Destroy (DELETE): Delete a specific service by its ID.
+    Endpoint: http://localhost:8000/api/servicos/{id}
+
+4. Update (PUT/PATCH): Update details of a specific service by its ID.
+    Endpoint: http://localhost:8000/api/servicos/{id}
+
+5. Edit (GET): Retrieve the edit form for a specific service by its ID.
+    Endpoint: http://localhost:8000/api/servicos/{id}/edit
+-->

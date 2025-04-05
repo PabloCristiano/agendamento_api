@@ -67,8 +67,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 
 ## Postman
-
-<!-- 
+ 
 API Endpoints for Service Management:
 
 1. Store (POST): Create a new service.
@@ -85,4 +84,4 @@ API Endpoints for Service Management:
 
 5. Edit (GET): Retrieve the edit form for a specific service by its ID.
     Endpoint: http://localhost:8000/api/servicos/{id}/edit
--->
+

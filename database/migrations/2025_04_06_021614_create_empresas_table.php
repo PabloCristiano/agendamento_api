@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('razao_social', 255);
             $table->string('cnpj', 18);
+            $table->string('nome_responsavel', 255);
             $table->string('telefone', 14);
             $table->string('email', 50);
             $table->string('logradouro', 50)->nullable();

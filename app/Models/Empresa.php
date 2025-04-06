@@ -9,6 +9,7 @@ class Empresa extends Model
     protected $fillable = [ 
         'razao_social',
         'cnpj',
+        'nome_responsavel',
         'telefone',
         'email',
         'logradouro',

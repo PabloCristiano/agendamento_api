@@ -10,7 +10,7 @@ use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\PaisesController;
 use App\Http\Controllers\CategoriaController;
 
-Route::resource('empresas', EmpresaController::class);
+Route::apiResource('empresas', EmpresaController::class);
 
 // Route::post('/clientes', [ClienteController::class, 'store']);
 // Route::post('/profissionais', [ProfissionalController::class, 'store']);

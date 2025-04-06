@@ -23,7 +23,7 @@ class ServicoController extends Controller
      */
     public function index()
     {
-        $servico = Servico::all();
+        $servico = Servico::with('categoria')->get();
         return response()->json([
             'data' => $servico,
             'message' => 'Serviços listados com sucesso.'

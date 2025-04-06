@@ -51,12 +51,14 @@ class ServicoController extends Controller
         $servico->tempo = $request->input('tempo');
         $servico->valor = $request->input('valor');
         $servico->comissao = $request->input('comissao');
+        $servico->id_categoria = $request->input('id_categoria');
 
         $rules = [
             'servico' => ['required', 'string', 'max:255', Rule::unique('servicos', 'servico')],
             'tempo' => 'required|integer|min:1',
             'valor' => 'required|numeric|min:0',
             'comissao' => 'required|numeric|min:0|max:100',
+            'id_categoria' => 'required|integer|exists:categorias,id'
         ];
 
         $messages = [
@@ -74,6 +76,9 @@ class ServicoController extends Controller
             'comissao.numeric' => 'O campo comissão deve ser um número.',
             'comissao.min' => 'O campo comissão deve ser no mínimo 0.',
             'comissao.max' => 'O campo comissão deve ser no máximo 100.',
+            'id_categoria.required' => 'O campo categoria é obrigatório.',
+            'id_categoria.integer' => 'O campo categoria deve ser um número inteiro.',
+            'id_categoria.exists' => 'A categoria informada não existe.',
         ];
 
         // Validação dos dados
@@ -118,27 +123,37 @@ class ServicoController extends Controller
     {
         return response()->json([
             'data' => $servico,
-            'message' => 'Dados para edição carregados com sucesso.'
+            'mensagem' => 'Dados para edição carregados com sucesso.'
         ]); 
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Servico $servico)
+    public function update(Request $request)
     {
-       
+        
+
+        // Validação dos dados
         $validated = $request->validate([
             'servico' => 'required|string|max:255',
             'tempo' => 'required|integer|min:1',
             'valor' => 'required|numeric',
-            'comissao' => 'required|numeric'
+            'comissao' => 'required|numeric',
+            'id_categoria' => 'required|integer|exists:categorias,id'
         ]);
-    
+
+        $servico = Servico::find($request->id);
+        
+        if (!$servico) {
+            return response()->json(['mensagem' => 'Serviço não encontrado'], 404);
+        }
+        
+        // Atualiza os dados do serviço
         $servico->update($validated);
-    
+
         return response()->json([
-            'message' => 'Serviço atualizado com sucesso!',
+            'mensagem' => 'Serviço atualizado com sucesso!',
             'data' => $servico
         ]);
     }
@@ -151,12 +166,12 @@ class ServicoController extends Controller
         $servico = Servico::find($id);
 
         if (!$servico) {
-            return response()->json(['message' => 'Serviço não encontrado'], 404);
+            return response()->json(['mensagem' => 'Serviço não encontrado'], 404);
         }
 
         $servico->delete();
         return response()->json([
-            'message' => 'Serviço deletado com sucesso.'
+            'mensagem' => 'Serviço deletado com sucesso.'
         ]);
     }
 }

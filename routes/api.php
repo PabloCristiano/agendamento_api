@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfissionalController;
 use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\PaisesController;
+use App\Http\Controllers\CategoriaController;
 
 
 
@@ -17,6 +18,7 @@ use App\Http\Controllers\PaisesController;
 // Route::apiResource('servicos', ServicoController::class);
 
 Route::resource('servicos', ServicoController::class);
+Route::resource('categorias', CategoriaController::class);
 
 // Route::post('/agendamentos', [AgendamentoController::class, 'store']);
 // Route::post('/paises', [PaisesController::class, 'store']);

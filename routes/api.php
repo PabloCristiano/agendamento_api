@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProfissionalController;
 use App\Http\Controllers\ServicoController;
@@ -9,7 +10,7 @@ use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\PaisesController;
 use App\Http\Controllers\CategoriaController;
 
-
+Route::resource('empresas', EmpresaController::class);
 
 // Route::post('/clientes', [ClienteController::class, 'store']);
 // Route::post('/profissionais', [ProfissionalController::class, 'store']);

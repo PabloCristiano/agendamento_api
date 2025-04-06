@@ -80,6 +80,11 @@
         <div class="logo">Vintage Code - O Passado Encontra o Futuro !!!</div>
         <!-- <div class="logo">VINTAGE CODE</div> -->
         <div class="loading">> Loading...</div>
+        <div class="ip-address"style="margin-top: 25px;">
+            <?php
+                echo "Seu IP: " . $_SERVER['REMOTE_ADDR'];
+            ?>
+        </div>
     </div>
     <div class="carousel">
         <div class="carousel-images">

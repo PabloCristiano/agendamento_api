@@ -14,10 +14,10 @@ class EmpresaController extends Controller
      */
     public function index()
     {
-        $empresas = Empresa::all();
+        $empresas = Empresa::with(['usuarios', 'cargos', 'categorias', 'agendamentos'])->get();
         return response()->json([
             'data' => $empresas,
-            'message' => 'Empresas listada com sucesso.'
+            'message' => 'Empresas listadas com sucesso.'
         ]);
     }
 

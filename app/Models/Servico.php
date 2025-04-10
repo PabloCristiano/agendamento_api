@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Servico extends Model
 {
@@ -14,14 +16,16 @@ class Servico extends Model
         'tempo',
         'valor',
         'comissao',
-        'id_categoria',
+        'categoria_id',
     ];
 
-    /**
-     * Define the relationship with the Categoria model.
-     */
     public function categoria()
     {
-        return $this->belongsTo(Categoria::class, 'id_categoria');
+        return $this->belongsTo(Categoria::class);
+    }
+
+    public function agendamentos()
+    {
+        return $this->belongsToMany(Agendamento::class, 'servico_agendamento');
     }
 }

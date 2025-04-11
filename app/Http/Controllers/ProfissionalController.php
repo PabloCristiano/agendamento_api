@@ -12,21 +12,18 @@ class ProfissionalController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $profissionais = Profissional::all();
+        
+        return response()->json([
+            'data' => $profissionais,
+            'message' => 'Profissionais listados com sucesso',
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProfissionalRequest $request)
     {
         //
     }
@@ -34,32 +31,55 @@ class ProfissionalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Profissional $profissional)
+    public function show($id)
     {
-        //
-    }
+        $profissional = Profissional::find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Profissional $profissional)
-    {
-        //
+        if (!$profissional) {
+            return response()->json(['message' => 'Profissional não encontrado']);
+        }
+
+        return response()->json([
+            'data' => $profissional,
+            'message' => 'Profissional encontrado com sucesso',
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Profissional $profissional)
+    public function update(StoreProfissionalRequest $request, $id)
     {
-        //
+        $profissional = Profissional::find($id);
+
+        if (!$profissional) {
+            return response()->json(['message' => 'Profissional não encontrado']);
+        }
+
+        $profissional->update($request->all());
+        return response()->json([
+            'data' => $profissional,
+            'message' => 'Profissional editado com sucesso',
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Profissional $profissional)
+    public function destroy($id)
     {
-        //
+        $profissional = Profissional::find($id);
+
+        if (!$profissional) {
+            return response()->json(['message' => 'Profissional não encontrado']);
+        }
+        
+        $profissional->status = 0;
+        $profissional->update();
+
+        return response()->json([
+            'data' => $profissional,
+            'message' => 'Profissional deletado com sucesso',
+        ]);
     }
 }

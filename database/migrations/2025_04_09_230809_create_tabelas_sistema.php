@@ -38,7 +38,7 @@ class CreateTabelasSistema extends Migration
             $table->timestamps();
         });
 
-        Schema::create('usuarios', function (Blueprint $table) {
+        Schema::create('profissionais', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
@@ -47,6 +47,7 @@ class CreateTabelasSistema extends Migration
             $table->string('password');
             $table->foreignId('cargo_id')->constrained('cargos');
             $table->foreignId('empresa_id')->constrained('empresas');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
 
@@ -65,6 +66,7 @@ class CreateTabelasSistema extends Migration
             $table->id();
             $table->string('categoria');
             $table->foreignId('empresa_id')->constrained('empresas');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
 
@@ -75,16 +77,19 @@ class CreateTabelasSistema extends Migration
             $table->decimal('valor', 10, 2);
             $table->decimal('comissao', 10, 2);
             $table->foreignId('categoria_id')->constrained('categorias');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
 
         Schema::create('agendamentos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cliente_id')->constrained('clientes');
-            $table->foreignId('usuario_id')->constrained('usuarios');
+            $table->foreignId('profissional_id')->constrained('profissionais');
             $table->foreignId('empresa_id')->constrained('empresas');
             $table->date('data_atendimento');
             $table->time('hora_atendimento');
+            $table->boolean('status')->default(true);
+            $table->text('observacao')->nullable();
             $table->timestamps();
         });
 
@@ -105,7 +110,7 @@ class CreateTabelasSistema extends Migration
         Schema::dropIfExists('servicos');
         Schema::dropIfExists('categorias');
         Schema::dropIfExists('clientes');
-        Schema::dropIfExists('usuarios');
+        Schema::dropIfExists('profissionais');
         Schema::dropIfExists('cargos');
         Schema::dropIfExists('empresas');
     }

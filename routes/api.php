@@ -11,10 +11,11 @@ use App\Http\Controllers\PaisesController;
 use App\Http\Controllers\CategoriaController;
 
 Route::apiResource('empresas', EmpresaController::class);
-Route::apiResource('profissionais', ProfissionalController::class);
+
+Route::apiResource('profissionais', ProfissionalController::class)
+    ->parameters(['profissionais' => 'profissional']);
 
 // Route::post('/clientes', [ClienteController::class, 'store']);
-// Route::post('/profissionais', [ProfissionalController::class, 'store']);
 // Route::post('/servicos', [ServicoController::class, 'store']);
 // Route::get('/servicos/{id}', [ServicoController::class, 'show']);
 // Route::apiResource('servicos', ServicoController::class);
@@ -23,10 +24,6 @@ Route::resource('servicos', ServicoController::class);
 Route::resource('categorias', CategoriaController::class);
 
 // Route::post('/agendamentos', [AgendamentoController::class, 'store']);
-// Route::post('/paises', [PaisesController::class, 'store']);
-// Route::get('/paises', [PaisesController::class, 'listarPaises']);
-
-
 
 
 Route::get('/teste', function () {

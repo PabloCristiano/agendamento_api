@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profissional;
+use App\Http\Requests\StoreProfissionalRequest;
 use Illuminate\Http\Request;
 
 class ProfissionalController extends Controller
@@ -24,8 +25,13 @@ class ProfissionalController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreProfissionalRequest $request)
-    {
-        //
+    {   
+        $profissional = Profissional::create($request->all());
+
+        return response()->json([
+            'data' => $profissional,
+            'message' => 'Profissional cadastrado com sucesso'
+        ]);
     }
 
     /**

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\StoreCategoriaRequest;
 
 class CategoriaController extends Controller
 {
@@ -26,7 +27,7 @@ class CategoriaController extends Controller
         $categorias = Categoria::all();
         return response()->json([
             'data' => $categorias,
-            'mensagem' => 'Categorias listadas com sucesso.'
+            'message' => 'Categorias listadas com sucesso.'
         ]);
     }
 
@@ -41,38 +42,28 @@ class CategoriaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCategoriaRequest $request)
     {
-        $categoria = new Categoria();
+        
 
-        $categoria->categoria = $request->input('categoria');
+        try {
 
-        $rules = [
-            'categoria' => ['required', 'string', 'max:255', Rule::unique('categorias', 'categoria')],
-        ];
+            $newCategoria = Categoria::create($request->all());
 
-        $messages = [
-            'categoria.required' => 'O campo categoria é obrigatório.',
-            'categoria.string' => 'O campo categoria deve ser uma string.',
-            'categoria.max' => 'O campo categoria não pode ter mais que 255 caracteres.',
-            'categoria.unique' => 'O campo categoria já está em uso.',
-        ];
+        } catch (ValidationException $e) {
 
-        // Validação dos dados
-        $validator = Validator::make($request->all(), $rules, $messages);
-
-        if ($validator->fails()) {
+            Log::error('Erro ao cadastrar o serviço: ' . $e->getMessage());
             return response()->json([
-                'errors' => $validator->errors(),
-                'mensagem' => 'Erro ao cadastrar categoria.'
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                'mensagem' => 'Erro ao cadastrar o serviço.',
+                'status' => false
+            ], 500);
+        
         }
 
-        $categoria->save();
 
         return response()->json([
-            'data' => $categoria,
-            'mensagem' => 'Categoria cadastrada com sucesso.'
+            'data' => $newCategoria,
+            'message' => 'Categoria cadastrada com sucesso.'
         ]);
     }
 
@@ -85,13 +76,13 @@ class CategoriaController extends Controller
 
         if (!$categoria) {
             return response()->json([
-                'mensagem' => 'Categoria não encontrada.'
-            ], Response::HTTP_NOT_FOUND);
+                'message' => 'Categoria não encontrada.'
+            ], 404);
         }
 
         return response()->json([
             'data' => $categoria,
-            'mensagem' => 'Categoria encontrada com sucesso.'
+            'message' => 'Categoria encontrada com sucesso.'
         ]);
     }
     
@@ -103,34 +94,28 @@ class CategoriaController extends Controller
     {
         return response()->json([
             'data' => $categoria,
-            'mensagem' => 'Dados para edição carregados com sucesso.'
+            'message' => 'Dados para edição carregados com sucesso.'
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Categoria $categoria)
+    public function update(StoreCategoriaRequest $request, int $id)
     {
-        $rules = [
-            'categoria' => ['required', 'string', 'max:255', Rule::unique('categorias', 'categoria')->ignore($categoria->id)],
-        ];
-
-        // Validação dos dados
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
+        $categoria = Categoria::find($id);
+        
+        if (!$categoria) {
             return response()->json([
-                'errors' => $validator->errors(),
-                'mensagem' => 'Erro ao atualizar categoria.'
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                'message' => 'Categoria não encontrada.'
+            ], 404);
         }
 
         $categoria->update($request->all());
 
         return response()->json([
             'data' => $categoria,
-            'mensagem' => 'Categoria atualizada com sucesso.'
+            'message' => 'Categoria atualizada com sucesso.'
         ]);
         
     }
@@ -144,14 +129,14 @@ class CategoriaController extends Controller
 
         if (!$categoria) {
             return response()->json([
-                'mensagem' => 'Categoria não encontrada.'
-            ], Response::HTTP_NOT_FOUND);
+                'message' => 'Categoria não encontrada.'
+            ], 404);
         }
 
         $categoria->delete();
 
         return response()->json([
-            'mensagem' => 'Categoria excluída com sucesso.'
+            'message' => 'Categoria excluída com sucesso.'
         ]);
     }
 }

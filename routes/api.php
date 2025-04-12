@@ -20,8 +20,9 @@ Route::apiResource('profissionais', ProfissionalController::class)
 // Route::get('/servicos/{id}', [ServicoController::class, 'show']);
 // Route::apiResource('servicos', ServicoController::class);
 
-Route::resource('servicos', ServicoController::class);
-Route::resource('categorias', CategoriaController::class);
+Route::apiResource('servicos', ServicoController::class);
+
+Route::apiResource('categorias', CategoriaController::class);
 
 // Route::post('/agendamentos', [AgendamentoController::class, 'store']);
 

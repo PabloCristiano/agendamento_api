@@ -14,6 +14,7 @@ class Cargo extends Model
     protected $fillable = [ 
         'cargo',
         'empresa_id',
+        'status',
     ];
 
     public function usuarios()

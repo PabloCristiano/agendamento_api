@@ -11,7 +11,7 @@ class Profissional extends Model
 {
     use HasFactory;
 
-    protected $table = 'profissionais';
+    protected $table = 'usuarios';
 
     protected $fillable = [ 
         'name',

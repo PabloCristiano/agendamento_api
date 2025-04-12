@@ -18,7 +18,7 @@ class Cargo extends Model
 
     public function usuarios()
     {
-        return $this->hasMany(Usuario::class);
+        return $this->hasMany(Profissional::class);
     }
 
     public function empresa()

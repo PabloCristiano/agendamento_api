@@ -34,6 +34,7 @@ class CreateTabelasSistema extends Migration
             $table->id();
             $table->string('cargo');
             $table->foreignId('empresa_id')->constrained('empresas');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
 

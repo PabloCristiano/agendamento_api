@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Http\Requests\StoreClienteRequest;
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller
@@ -12,54 +13,68 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $clientes = Cliente::all();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json([
+            'data' => $clientes,
+            'message' => 'Clientes listados com sucesso',
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreClienteRequest $request)
     {
-        dd($request->all());
+        $cliente = Cliente::create($request->all());
+
+        return response()->json([
+            'data' => $cliente,
+            'message' => 'Cliente cadastrado com sucesso',
+        ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Cliente $cliente)
+    public function show($id)
     {
-        //
-    }
+        $cliente = Cliente::find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cliente $cliente)
-    {
-        //
+        if (!$cliente) {
+            return response()->json(['message' => 'Cliente não encontrado']);
+        }
+
+        return response()->json([
+            'data' => $cliente,
+            'message' => 'Cliente encontrado com sucesso',
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cliente $cliente)
+    public function update(StoreClienteRequest $request, $id)
     {
-        //
+        $cliente = Cliente::find($id);
+
+        if (!$cliente) {
+            return response()->json(['message' => 'Cliente não encontrado']);
+        }
+
+        $cliente->update($request->all());
+
+        return response()->json([
+            'data' => $cliente,
+            'message' => 'Cliente encontrado com sucesso',
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cliente $cliente)
+    public function destroy($id)
     {
-        //
+        throw new \BadMethodCallException('Função destroy não implementada.');
     }
 }

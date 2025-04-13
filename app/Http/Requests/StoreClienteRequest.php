@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProfissionalRequest extends FormRequest
+class StoreClienteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,35 +27,31 @@ class StoreProfissionalRequest extends FormRequest
                 'required',
                 'string',
                 'min:3',
-                'max:255'
+                'max:255',
             ],
             'cpf' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('profissionais')->ignore($this->route('profissional')),
+                Rule::unique('clientes')->ignore($this->route('cliente')),
             ],
-            'email' => [
+            'data_nascimento' => [
                 'required',
-                'email',
-                Rule::unique('profissionais')->ignore($this->route('profissional')),
+                'date',
+            ],
+            'whatsapp' => [
+                'required',
+                'string',
+                'max:255',
             ],
             'telefone' => [
                 'required',
                 'string',
                 'max:255',
             ],
-            'password' => [
-                'required',
-                Password::min(8),
-            ],
-            'cargo_id' => [
-                'required',
-                'exists:App\Models\Cargo,id'
-            ],
-            'empresa_id' => [
-                'required',
-                'exists:App\Models\Empresa,id'
+            'email' => [
+                'nullable',
+                'email',
             ],
         ];
     }
@@ -72,18 +67,16 @@ class StoreProfissionalRequest extends FormRequest
             'cpf.string' => 'O CPF deve ser um texto.',
             'cpf.max' => 'O CPF deve ter no máximo 255 caracteres.',
             'cpf.unique' => 'O CPF já está cadastrado.',
-            'email.required' => 'O email é obrigatório.',
-            'email.email' => 'Email inválido.',
-            'email.unique' => 'O email já está cadastrado.',
+            'data_nascimento.required' => 'A data de nascimento é obrigaória.',
+            'data_nascimento.date' => 'A data de nascimento deve ser uma data válida.',
+            'whatsapp.required' => 'O whatsapp é obrigatório.',
+            'whatsapp.string' => 'O whatsapp deve ser um texto.',
+            'whatsapp.max' => 'O whatsapp não pode ter mais que 255 caracteres.',
             'telefone.required' => 'O telefone é obrigatório.',
             'telefone.string' => 'O telefone deve ser um texto.',
             'telefone.max' => 'O telefone não pode ter mais que 255 caracteres.',
-            'password.required' => 'A senha é obrigatório.',
-            'password.min' => 'A senha deve ter no mínimo 8 caracteres.',
-            "cargo_id.required" => 'O cargo é obrigatório.',
-            "cargo_id.exists" => 'Cargo inválido.',
-            "empresa_id.required" => 'A empresa é obrigatório.',
-            "empresa_id.exists" => 'Empresa inválida.',
+            'email.email' => 'Email inválido.',
+            'email.unique' => 'O email já está cadastrado.',
         ];
     }
 }

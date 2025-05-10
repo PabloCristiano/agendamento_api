@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\CargoController;
 use App\Http\Controllers\ProfissionalController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ServicoController;
@@ -12,7 +13,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CEPController;
 
 Route::apiResource('empresas', EmpresaController::class);
-
+Route::apiResource('cargos', CargoController::class);
 Route::apiResource('profissionais', ProfissionalController::class)
     ->parameters(['profissionais' => 'profissional']);
 

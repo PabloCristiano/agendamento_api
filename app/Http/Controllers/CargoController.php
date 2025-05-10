@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cargo;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreCargoRequest;
 
 class CargoController extends Controller
 {
@@ -11,23 +13,25 @@ class CargoController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $cargos = Cargo::All();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json([
+            'data' => $cargos,
+            'message' => 'Cargos listados com sucesso',
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCargoRequest $request)
     {
-        //
+        $cargo = Cargo::create($request->all());
+
+        return response()->json([
+            'data' => $cargo,
+            'message' => 'Cargo cadastrado com sucesso'
+        ]);
     }
 
     /**
@@ -35,23 +39,35 @@ class CargoController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
+        $cargo = Cargo::find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        if (!$cargo) {
+            return response()->json(['message' => 'Cargo não encontrado']);
+        }
+
+        return response()->json([
+            'data' => $cargo,
+            'message' => 'Cargo encontrado com sucesso',
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreCargoRequest $request, string $id)
     {
-        //
+        $cargo = Cargo::find($id);
+
+        if (!$cargo) {
+            return response()->json(['message' => 'Cargo não encontrado']);
+        }
+
+        $cargo->update($request->all());
+
+        return response()->json([
+            'data' => $cargo,
+            'message' => 'Cargo editado com sucesso',
+        ]);
     }
 
     /**
@@ -59,6 +75,18 @@ class CargoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $cargo = Cargo::find($id);
+
+        if (!$cargo) {
+            return response()->json(['message' => 'Cargo não encontrado']);
+        }
+
+        $cargo->status = 0;
+        $cargo->update();
+
+        return response()->json([
+            'data' => $cargo,
+            'message' => 'Cargo deletado com sucesso',
+        ]);
     }
 }

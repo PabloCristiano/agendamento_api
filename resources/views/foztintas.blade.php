@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #6b46c1 0%, #3b82f6 25%, #10b981 50%, #f59e0b 75%, #ef4444 100%);
+            background: #372FA4;
             background-size: 400% 400%;
             animation: gradientFlow 15s ease infinite;
             min-height: 100vh;
@@ -53,7 +53,7 @@
         .logo {
             font-size: 2.5rem;
             font-weight: 800;
-            background: linear-gradient(45deg, #6b46c1, #3b82f6, #10b981);
+            background: #372FA4;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -214,7 +214,7 @@
         }
 
         .store-card {
-            background: linear-gradient(135deg, #10b981, #3b82f6);
+            background: #372FA4;
             color: white;
             padding: 30px;
             border-radius: 15px;
@@ -356,8 +356,8 @@
             <div class="stores-section">
                 <h2 class="stores-title">LOJAS PARTICIPANTES EM TOLEDO</h2>
                 <div class="stores-grid">
-                    <div class="store-card">FILIAL 007</div>
-                    <div class="store-card">FILIAL 011</div>
+                    <div class="store-card">Av. José João Muraro, 717 - Jardim Porto Alegre</div>
+                    <div class="store-card">R. Rui Barbosa, 998 - Centro</div>
                 </div>
             </div>
 

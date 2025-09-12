@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foz Tintas - Compre e Ganhe uma Picanha</title>
+    <title>Foz Tintas - Compre e Ganhe </title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
        
@@ -326,7 +326,7 @@
     <main>
         <section class="hero">
             <div class="container">
-                <h1>COMPRE E GANHE</h1>
+                <h1>PROMOÇÃO COMPRE E GANHE</h1>
                 <div class="picanha-icon">🥩</div>
                 <p>Uma deliciosa picanha te espera!</p>
             </div>

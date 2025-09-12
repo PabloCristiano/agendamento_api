@@ -8,6 +8,18 @@ Route::get('/', function () {
     return view('foztintas');
 });
 
+Route::get('/login', function () {
+    return view('layouts.login');
+});
+
+Route::get('/register', function () {
+    return view('layouts.register');
+});
+
+Route::get('/app', function () {
+    return view('foztintas.index');
+});
+
 Route::resource('autcom-vendas', AutcomVendasController::class);
 Route::get('/autcom-vendas/create', [AutcomVendasController::class, 'create'])->name('autcom-vendas.create');
 Route::post('/autcom-vendas', [AutcomVendasController::class, 'store'])->name('autcom-vendas.store');

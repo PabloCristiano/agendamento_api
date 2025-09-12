@@ -518,6 +518,7 @@
         // Fecha ao clicar no botão
         document.getElementById('fecharModalErroVoucher').onclick = function() {
           modal.style.display = 'none';
+          novaConsulta();
         };
         // Fecha ao pressionar ESC
         document.addEventListener('keydown', function escClose(e) {

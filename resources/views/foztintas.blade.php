@@ -317,7 +317,7 @@
             <div class="header-content">
                 <div class="logo">FOZ TINTAS</div>
                 <div class="nav-buttons">
-                    <a href="#" class="btn btn-primary">Cadastrar Nota e Gerar Voucher</a>
+                    <a href="{{ route('cadastro-voucher.index') }}" class="btn btn-primary">Cadastrar Nota e Gerar Voucher</a>
                 </div>
             </div>
         </div>

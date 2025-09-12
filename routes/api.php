@@ -10,6 +10,7 @@ use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\PaisesController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\CEPController;
+use App\Http\Controllers\AutcomVendasController;
 
 Route::apiResource('empresas', EmpresaController::class);
 
@@ -25,6 +26,8 @@ Route::apiResource('categorias', CategoriaController::class);
 // Route::post('/agendamentos', [AgendamentoController::class, 'store']);
 
 Route::get('/cep/buscar/{cep}', [CEPController::class, 'findCEP']);
+
+Route::apiResource('autcom-vendas', AutcomVendasController::class);
 
 Route::get('/teste', function () {
     return response()->json([

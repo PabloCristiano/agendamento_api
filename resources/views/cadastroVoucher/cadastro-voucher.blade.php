@@ -451,7 +451,7 @@
             <body>
             <div class="declaracao-container">
             <div class="logo">
-                <img src="/images/logo.png" alt="Foz Tintas Logo">
+                <img src="{{ asset('images/logo.png') }}" alt="Foz Tintas Logo">
             </div>
             <div class="titulo">DECLARAÇÃO DE RECEBIMENTO DE PRÊMIO</div>
             <div class="subtitulo">Promoção Compre e ganhe uma picanha</div>
@@ -465,7 +465,7 @@
                 Para fins legais, declaro ter recebido de <strong>AGFABI COMÉRCIO DE TINTAS LTDA</strong>, inscrita no CNPJ sob o nº 03.053.280/0006-07, na data infra-assinada, o prêmio de uma peça de picanha, referente à campanha <strong>Promoção Compre e ganhe uma picanha</strong>, realizada na cidade de Toledo / PR, de 22 a 27 de setembro de 2025. Declaro ainda que não tive nenhuma despesa com o recebimento da premiação acima, sendo-me entregue, portanto, sem nenhum ônus, conforme previsto no regulamento. Autorizo, também, a inclusão de meu nome, imagem e som de voz para fins de divulgação dos contemplados na promoção, pelo prazo de 01 (um) ano a partir da data de apuração, sem acarretar qualquer ônus ou encargo à empresa.
             </div>
             <div class="data-local">
-                _____________________, ${dataFormatada}.
+                Toledo/PR, ${dataFormatada}.
             </div>
             <div style="margin-top: 30px;">De acordo</div>
             <div class="assinatura-area">

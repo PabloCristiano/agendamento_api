@@ -50,6 +50,11 @@ class AutcomVendasController extends Controller
         return view('cadastroVoucher.cadastro-voucher');
     }
 
+    public function reimprimir(): View
+    {
+        return view('cadastroVoucher.reimpressao-voucher');
+    }
+
     /**
      * Show the form for creating a new resource.
      */

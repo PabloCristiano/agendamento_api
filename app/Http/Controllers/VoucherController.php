@@ -109,4 +109,39 @@ class VoucherController extends Controller
             default   => $codigo,
         };
     }
+
+    public function reimprimir(Request $request)
+    {
+       
+        
+        $validated = $request->validate([
+            'numeroNota' => ['required', 'string', 'max:30'],
+            'cpfCnpj'    => ['required', 'string'],
+        ]);
+
+        $cpfCnpjRaw = preg_replace('/\D/', '', (string) $validated['cpfCnpj']);
+
+        $voucher = Voucher::where('numero_nota', $validated['numeroNota'])
+            ->where('cpf_cnpj', $cpfCnpjRaw)
+            ->first();
+
+        if (!$voucher) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Voucher não encontrado para os dados informados.'
+            ], 404);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'voucherNumber' => $voucher->voucher_code,
+            'dados' => [
+                'cliente' => $voucher->nome_completo,
+                'cpf'     => $this->formatarCpfCnpj($voucher->cpf_cnpj),
+                'numeroNota' => $voucher->numero_nota,
+                'data'    => optional($voucher->gerado_em)->format('d/m/Y H:i'),
+                'loja'    => $this->nomeLoja($voucher->loja),
+            ]
+        ]);
+    }
 }

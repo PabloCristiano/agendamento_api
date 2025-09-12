@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Models\Voucher;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+
+class VoucherController extends Controller
+{
+    public function store(Request $request)
+    {
+
+        // Normaliza CPF/CNPJ (só dígitos)
+        $cpfCnpjRaw = preg_replace('/\D/', '', (string) $request->input('cpfCnpj'));
+
+        $validated = $request->validate([
+            'numeroNota'   => ['required','string','max:30', 'unique:vouchers,numero_nota'],
+            'nomeCompleto' => ['required','string','min:3','max:150'],
+            'cpfCnpj'      => ['required','string', function($attr,$value,$fail) use ($cpfCnpjRaw) {
+                if (!in_array(strlen($cpfCnpjRaw), [11,14])) {
+                    $fail('CPF/CNPJ inválido.');
+                    return;
+                }
+                // (Opcional) Validação algorítmica de CPF/CNPJ pode ser adicionada aqui
+            }],
+            'loja'         => ['required', Rule::in(['loja007','loja011'])],
+        ],[
+            'numeroNota.unique' => 'Esta nota já gerou um voucher.',
+        ]);
+
+        // Se quiser travar 1 por CPF/CNPJ, descomente esse bloco:
+        // if (Voucher::where('cpf_cnpj', $cpfCnpjRaw)->exists()) {
+        //     return response()->json([
+        //         'ok' => false,
+        //         'message' => 'Este CPF/CNPJ já possui um voucher.'
+        //     ], 422);
+        // }
+
+        $voucherCode = $this->gerarCodigoVoucher($validated['numeroNota']);
+
+        $voucher = null;
+        DB::transaction(function () use (&$voucher, $validated, $cpfCnpjRaw, $voucherCode) {
+            $voucher = Voucher::create([
+                'numero_nota' => $validated['numeroNota'],
+                'nome_completo' => $validated['nomeCompleto'],
+                'cpf_cnpj' => $cpfCnpjRaw,
+                'loja' => $validated['loja'],
+                'voucher_code' => $voucherCode,
+                'gerado_em' => now(),
+            ]);
+        });
+
+        // Resposta pensada para “preencher” o seu front
+        return response()->json([
+            'ok' => true,
+            'voucherNumber' => $voucher->voucher_code,
+            'dados' => [
+                'cliente' => $voucher->nome_completo,
+                'cpf'     => $this->formatarCpfCnpj($voucher->cpf_cnpj),
+                // Se quiser exibir valor/marca/data, integre aqui com seu ERP/DB
+                'valor'   => null,
+                'marca'   => null,
+                'data'    => optional($voucher->gerado_em)->format('d/m/Y H:i'),
+                'loja'    => $this->nomeLoja($voucher->loja),
+            ]
+        ], 201);
+    }
+
+    private function gerarCodigoVoucher(string $numeroNota): string
+    {
+        // Gera algo tipo: PICANHA-12345-7G8H
+        $sufixo = strtoupper(Str::random(4));
+        $code = "PICANHA-{$numeroNota}-{$sufixo}";
+
+        // Garante unicidade
+        while (Voucher::where('voucher_code', $code)->exists()) {
+            $sufixo = strtoupper(Str::random(4));
+            $code = "PICANHA-{$numeroNota}-{$sufixo}";
+        }
+        return $code;
+    }
+
+    private function formatarCpfCnpj(string $digits): string
+    {
+        if (strlen($digits) === 11) {
+            return preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $digits);
+        }
+        if (strlen($digits) === 14) {
+            return preg_replace('/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/', '$1.$2.$3/$4-$5', $digits);
+        }
+        return $digits;
+    }
+
+    private function nomeLoja(string $codigo): string
+    {
+        return match ($codigo) {
+            'loja007' => 'Av. José João Muraro, 717 - Jardim Porto Alegre - Loja 007',
+            'loja011' => 'R. Rui Barbosa, 998 - Centro - Loja 011',
+            default   => $codigo,
+        };
+    }
+}

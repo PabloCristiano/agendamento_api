@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AutcomVendasController;
+use App\Http\Controllers\VoucherController;
 
 Route::get('/', function () {
     return view('foztintas');
@@ -15,3 +16,8 @@ Route::get('/cadastro-voucher/{id}', [AutcomVendasController::class, 'show'])->n
 Route::get('/cadastro-voucher/{id}/edit', [AutcomVendasController::class, 'edit'])->name('cadastro-voucher.edit');
 Route::put('/cadastro-voucher/{id}', [AutcomVendasController::class, 'update'])->name('cadastro-voucher.update');
 Route::delete('/cadastro-voucher/{id}', [AutcomVendasController::class, 'destroy'])->name('cadastro-voucher.destroy');
+
+
+
+//voucher
+Route::post('/gerar-voucher', [VoucherController::class, 'store'])->name('gerar-voucher.store');

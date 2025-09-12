@@ -18,39 +18,47 @@ class VoucherController extends Controller
         $cpfCnpjRaw = preg_replace('/\D/', '', (string) $request->input('cpfCnpj'));
 
         $validated = $request->validate([
-            'numeroNota'   => ['required','string','max:30', 'unique:vouchers,numero_nota'],
+            'numeroNota'   => ['required','string','max:30'],
             'nomeCompleto' => ['required','string','min:3','max:150'],
             'cpfCnpj'      => ['required','string', function($attr,$value,$fail) use ($cpfCnpjRaw) {
-                if (!in_array(strlen($cpfCnpjRaw), [11,14])) {
-                    $fail('CPF/CNPJ inválido.');
-                    return;
-                }
-                // (Opcional) Validação algorítmica de CPF/CNPJ pode ser adicionada aqui
+            if (!in_array(strlen($cpfCnpjRaw), [11,14])) {
+                $fail('CPF/CNPJ inválido.');
+                return;
+            }
+            // (Opcional) Validação algorítmica de CPF/CNPJ pode ser adicionada aqui
             }],
             'loja'         => ['required', Rule::in(['loja007','loja011'])],
         ],[
             'numeroNota.unique' => 'Esta nota já gerou um voucher.',
         ]);
 
-        // Se quiser travar 1 por CPF/CNPJ, descomente esse bloco:
-        // if (Voucher::where('cpf_cnpj', $cpfCnpjRaw)->exists()) {
-        //     return response()->json([
-        //         'ok' => false,
-        //         'message' => 'Este CPF/CNPJ já possui um voucher.'
-        //     ], 422);
-        // }
+        // Verifica se a nota já foi cadastrada
+        if (Voucher::where('numero_nota', $validated['numeroNota'])->exists()) {
+            return response()->json([
+            'ok' => false,
+            'message' => 'Esta nota já gerou um voucher.'
+            ], 422);
+        }
+
+        // Verifica se o CPF/CNPJ já foi cadastrado
+        if (Voucher::where('cpf_cnpj', $cpfCnpjRaw)->exists()) {
+            return response()->json([
+            'ok' => false,
+            'message' => 'Este CPF/CNPJ já possui um voucher.'
+            ], 422);
+        }
 
         $voucherCode = $this->gerarCodigoVoucher($validated['numeroNota']);
 
         $voucher = null;
         DB::transaction(function () use (&$voucher, $validated, $cpfCnpjRaw, $voucherCode) {
             $voucher = Voucher::create([
-                'numero_nota' => $validated['numeroNota'],
-                'nome_completo' => $validated['nomeCompleto'],
-                'cpf_cnpj' => $cpfCnpjRaw,
-                'loja' => $validated['loja'],
-                'voucher_code' => $voucherCode,
-                'gerado_em' => now(),
+            'numero_nota' => $validated['numeroNota'],
+            'nome_completo' => $validated['nomeCompleto'],
+            'cpf_cnpj' => $cpfCnpjRaw,
+            'loja' => $validated['loja'],
+            'voucher_code' => $voucherCode,
+            'gerado_em' => now(),
             ]);
         });
 
@@ -59,27 +67,25 @@ class VoucherController extends Controller
             'ok' => true,
             'voucherNumber' => $voucher->voucher_code,
             'dados' => [
-                'cliente' => $voucher->nome_completo,
-                'cpf'     => $this->formatarCpfCnpj($voucher->cpf_cnpj),
-                // Se quiser exibir valor/marca/data, integre aqui com seu ERP/DB
-                'valor'   => null,
-                'marca'   => null,
-                'data'    => optional($voucher->gerado_em)->format('d/m/Y H:i'),
-                'loja'    => $this->nomeLoja($voucher->loja),
+            'cliente' => $voucher->nome_completo,
+            'cpf'     => $this->formatarCpfCnpj($voucher->cpf_cnpj),
+            'numeroNota' => $voucher->numero_nota,
+            'data'    => optional($voucher->gerado_em)->format('d/m/Y H:i'),
+            'loja'    => $this->nomeLoja($voucher->loja),
             ]
         ], 201);
     }
 
     private function gerarCodigoVoucher(string $numeroNota): string
     {
-        // Gera algo tipo: PICANHA-12345-7G8H
+        // Gera algo tipo: FOZTINTAS-12345-7G8H
         $sufixo = strtoupper(Str::random(4));
-        $code = "PICANHA-{$numeroNota}-{$sufixo}";
+        $code = "FOZTINTAS-{$numeroNota}-{$sufixo}";
 
         // Garante unicidade
         while (Voucher::where('voucher_code', $code)->exists()) {
             $sufixo = strtoupper(Str::random(4));
-            $code = "PICANHA-{$numeroNota}-{$sufixo}";
+            $code = "FOZTINTAS-{$numeroNota}-{$sufixo}";
         }
         return $code;
     }

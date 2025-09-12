@@ -405,7 +405,7 @@
         <body>
           <div class="declaracao-container">
             <div class="logo">
-              <img src="/images/logo.png" alt="Foz Tintas Logo">
+              <img src="{{ asset('images/logo.png') }}" alt="Foz Tintas Logo">
             </div>
             <div class="titulo">DECLARAÇÃO DE RECEBIMENTO DE PRÊMIO</div>
             <div class="subtitulo">Promoção Compre e ganhe uma picanha</div>

@@ -47,12 +47,13 @@ class AutcomVendasController extends Controller
         //     return response()->json($vendas);
         // }
 
-        return view('cadastroVoucher.cadastro-voucher');
+        // return view('cadastroVoucher.cadastro-voucher');
+        return view('app.cadastro-voucher');
     }
 
     public function reimprimir(): View
     {
-        return view('cadastroVoucher.reimpressao-voucher');
+        return view('app.reimpressao-voucher');
     }
 
     /**

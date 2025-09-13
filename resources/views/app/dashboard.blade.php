@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Sistema de Vouchers')</title>
+    <title>Foz Tintas - Promoções</title>
     <style>
         * {
             margin: 0;
@@ -225,18 +225,17 @@
     @stack('styles')
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar" style="position: sticky; top: 0; z-index: 1000;">
         <div class="navbar-container">
-            <a href="/" class="navbar-brand">Sistema de Vouchers</a>
+            <a href="/" class="navbar-brand">Promoções Foz Tintas</a>
             
-            <!-- <ul class="navbar-nav">
-                <li><a href="/autcom-vendas">Dashboard</a></li>
-                <li><a href="/cadastro-voucher">Vouchers</a></li>
-                <li><a href="/autcom-vendos/create">Novo Cadastro</a></li>
-            </ul> -->
+            <ul class="navbar-nav">
+                <li><a href="/cadastro-voucher">Novo Cadastro de Vouchers</a></li>
+                <li><a href="/reimprimir">Reimprimir Vouchers</a></li>
+            </ul>
             
             <div class="user-info">
-                
+                <p>Bem-vindo, {{ auth()->user()->name }}</p>
                 <form method="POST" action="/logout" class="logout-form">
                     @csrf
                     <button type="submit" class="logout-btn">Sair</button>
@@ -246,23 +245,8 @@
     </nav>
     
     <div class="container">
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+        @yield('content')
+    </div>    
         
-        @if(session('error'))
-            <div class="alert alert-error">
-                {{ session('error') }}
-            </div>
-        @endif
-        
-        <div class="content-card">
-            @yield('content')
-        </div>
-    </div>
-    
-    @stack('scripts')
 </body>
 </html>

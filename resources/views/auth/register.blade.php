@@ -1,11 +1,11 @@
-<!-- LOGIN.BLADE.PHP -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - FOZ TINTAS</title>
+    <title>Cadastro - Sistema de Vouchers</title>
     <style>
+        /* Mesmo CSS do login com pequenas adaptações */
         * {
             margin: 0;
             padding: 0;
@@ -22,7 +22,7 @@
             padding: 20px;
         }
         
-        .login-container {
+        .register-container {
             background: white;
             padding: 40px;
             border-radius: 15px;
@@ -91,23 +91,7 @@
             margin-top: 5px;
         }
         
-        .remember-me {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .remember-me input {
-            margin-right: 10px;
-        }
-        
-        .remember-me label {
-            margin: 0;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .login-btn {
+        .register-btn {
             width: 100%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -120,57 +104,54 @@
             transition: transform 0.2s ease;
         }
         
-        .login-btn:hover {
+        .register-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
         
-        .register-link {
+        .login-link {
             text-align: center;
             margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid #e1e8ed;
         }
         
-        .register-link a {
+        .login-link a {
             color: #667eea;
             text-decoration: none;
             font-weight: 500;
         }
         
-        .register-link a:hover {
+        .login-link a:hover {
             text-decoration: underline;
-        }
-        
-        .alert {
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        
-        .alert-info {
-            background-color: #d1ecf1;
-            border: 1px solid #bee5eb;
-            color: #0c5460;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="register-container">
         <div class="logo">
-            <h1>FOZ TINTAS</h1>
-            <p>Faça login para acessar o sistema</p>
+            <h1>Cadastro</h1>
+            <p>Crie sua conta para acessar o sistema</p>
         </div>
         
-        @if(session('message'))
-            <div class="alert alert-info">
-                {{ session('message') }}
-            </div>
-        @endif
-        
-        <form method="POST" action="/login">
+        <form method="POST" action="{{ route('register') }}">
             @csrf
+            
+            <div class="form-group">
+                <label for="name">Nome</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    value="{{ old('name') }}" 
+                    required 
+                    autofocus
+                    class="{{ $errors->has('name') ? 'error' : '' }}"
+                >
+                @if($errors->has('name'))
+                    <div class="error-message">{{ $errors->first('name') }}</div>
+                @endif
+            </div>
             
             <div class="form-group">
                 <label for="email">E-mail</label>
@@ -179,8 +160,7 @@
                     id="email" 
                     name="email" 
                     value="{{ old('email') }}" 
-                    required 
-                    autofocus
+                    required
                     class="{{ $errors->has('email') ? 'error' : '' }}"
                 >
                 @if($errors->has('email'))
@@ -202,18 +182,22 @@
                 @endif
             </div>
             
-            <div class="remember-me">
-                <input type="checkbox" id="remember" name="remember">
-                <label for="remember">Lembrar-me</label>
+            <div class="form-group">
+                <label for="password_confirmation">Confirmar Senha</label>
+                <input 
+                    type="password" 
+                    id="password_confirmation" 
+                    name="password_confirmation" 
+                    required
+                >
             </div>
             
-            <button type="submit" class="login-btn">Entrar</button>
+            <button type="submit" class="register-btn">Cadastrar</button>
         </form>
         
-        <div class="register-link">
-            <p>Não tem uma conta? <a href="/register">Cadastre-se aqui</a></p>
+        <div class="login-link">
+            <p>Já tem uma conta? <a href="/login">Faça login aqui</a></p>
         </div>
     </div>
 </body>
 </html>
-

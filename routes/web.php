@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AutcomVendasController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('foztintas');
@@ -32,8 +33,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/app', function () {return view('app.dashboard');})->name('app.dashboard');
-    
+    // Route::get('/app', function () {return view('app.dashboard');})->name('app.dashboard');
+    Route::get('/app', [DashboardController::class, 'index'])->name('app.dashboard');
     // Adicione aqui outras rotas protegidas   
     Route::get('/cadastro-voucher', [AutcomVendasController::class, 'index'])->name('cadastro-voucher.index');
     Route::get('/reimprimir', [AutcomVendasController::class, 'reimprimir'])->name('cadastro-voucher.reimprimir');    

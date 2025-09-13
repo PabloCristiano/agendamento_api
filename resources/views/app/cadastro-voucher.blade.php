@@ -1,4 +1,4 @@
-@extends('app.dashboard')
+@extends('app.index')
 @section('content')
 @section('title', 'Cadastro de Voucher')
 <style>

@@ -144,4 +144,35 @@ class VoucherController extends Controller
             ]
         ]);
     }
+
+    public function totalVouchers()
+    {
+        $total = Voucher::count();
+        return $total;
+        // return response()->json([
+        //     'ok' => true,
+        //     'total' => $total
+        // ]);
+    }
+
+    public function totalLoja007()
+    {
+        $total = Voucher::where('loja', 'loja007')->count();
+        return $total;
+        // return response()->json([
+        //     'loja007' => $total,
+        // ]);
+    }
+
+    public function totalLoja011()
+    {
+        $total = Voucher::where('loja', 'loja011')->count();
+        return $total;
+        // return response()->json([
+        //     'loja011' => $total,
+        // ]);
+    }
+
+
+
 }

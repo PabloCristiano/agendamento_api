@@ -45,7 +45,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credenciais)) {
             $request->session()->regenerate();
-            return redirect()->route('dashboard');
+            return redirect()->route('app.dashboard');
         }
 
         return back()->withErrors(['email' => 'Email ou senha inválidos']);

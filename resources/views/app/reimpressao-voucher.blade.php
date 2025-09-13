@@ -1,4 +1,4 @@
-@extends('app.dashboard')
+@extends('app.index')
 @section('content')
 @section('title', 'Reimpressão de Voucher')
 <!-- CSRF para Laravel (Blade) -->

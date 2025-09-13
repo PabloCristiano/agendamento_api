@@ -318,7 +318,7 @@
                 <div class="logo">FOZ TINTAS</div>
                 <div class="nav-buttons">
                     @auth
-                        <a href="{{ route('dashboard') }}" class="btn btn-primary">Home</a>
+                        <a href="{{ route('app.dashboard') }}" class="btn btn-primary">Home</a>
                     @else
                         <a href="{{ route('login') }}" class="btn btn-primary">Entrar</a>
                     @endauth

@@ -32,7 +32,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {return view('app.dashboard');})->name('dashboard');
+    Route::get('/app', function () {return view('app.dashboard');})->name('app.dashboard');
     
     // Adicione aqui outras rotas protegidas   
     Route::get('/cadastro-voucher', [AutcomVendasController::class, 'index'])->name('cadastro-voucher.index');

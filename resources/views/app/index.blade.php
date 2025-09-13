@@ -15,7 +15,7 @@
             <a href="/app" class="navbar-brand">Promoções Foz Tintas</a>
             
             <ul class="navbar-nav">
-                <li><a href="/cadastro-voucher">Novo Cadastro de Vouchers</a></li>
+                <li><a href="{{ route('vouchers.create') }}">Novo Cadastro de Vouchers</a></li>
                 <li><a href="/reimprimir">Reimprimir Vouchers</a></li>
             </ul>
             

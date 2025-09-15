@@ -287,57 +287,113 @@
         const ano = hoje.getFullYear();
         const dataFormatada = `${dia} de ${mes} de ${ano}`;
 
-        const w = window.open('', '_blank');
-        w.document.write(`
-        <html>
-        <head>
-          <title>Declaração de Recebimento de Prêmio - Foz Tintas</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 30px; background: #fff; }
-            .declaracao-container { max-width: 700px; margin: 0 auto; border: 2px solid #372FA4; border-radius: 12px; padding: 40px 30px; }
-            .logo { text-align: right; margin-bottom: 20px; }
-            .logo img { max-width: 180px; }
-            .titulo { text-align: center; font-size: 1.5rem; font-weight: bold; color: #372FA4; margin-bottom: 10px; }
-            .subtitulo { text-align: center; font-size: 1.1rem; margin-bottom: 30px; }
-            .info { margin-bottom: 25px; }
-            .info strong { display: inline-block; width: 140px; }
-            .texto { font-size: 1.05rem; margin-bottom: 35px; text-align: justify; }
-            .assinatura-area { margin-top: 50px; }
-            .linha { border-bottom: 1px solid #333; width: 350px; margin: 40px auto 0; height: 2em; }
-            .assinatura-label { text-align: center; margin-top: 8px; font-size: 1rem; }
-            .data-local { margin: 40px 0 0 0; text-align: left; }
-          </style>
-        </head>
-        <body>
-          <div class="declaracao-container">
-            <div class="logo">
-               <img src="{{ asset('images/logo.png') }}?t={{ time() }}" alt="Foz Tintas Logo">
-            </div>
-            <div class="titulo">DECLARAÇÃO DE RECEBIMENTO DE PRÊMIO</div>
-            <div class="subtitulo">Promoção Compre e ganhe uma picanha</div>
-            <div class="info">
-              <div><strong>Voucher:</strong> ${voucher.numero}</div>
-              <div><strong>Nome:</strong> ${voucher.dados.cliente ?? ''}</div>
-              <div><strong>CPF/CNPJ:</strong> ${voucher.dados.cpf ?? ''}</div>
-              <div><strong>Número de Nota:</strong> ${voucher.dados.numeroNota ?? ''}</div>
-            </div>
-            <div class="texto">
-              Para fins legais, declaro ter recebido de <strong>AGFABI COMÉRCIO DE TINTAS LTDA</strong>, inscrita no CNPJ sob o nº 03.053.280/0006-07, na data infra-assinada, o prêmio de uma peça de picanha, referente à campanha <strong>Promoção Compre e ganhe uma picanha</strong>, realizada na cidade de Toledo / PR, de 22 a 27 de setembro de 2025. Declaro ainda que não tive nenhuma despesa com o recebimento da premiação acima, sendo-me entregue, portanto, sem nenhum ônus, conforme previsto no regulamento. Autorizo, também, a inclusão de meu nome, imagem e som de voz para fins de divulgação dos contemplados na promoção, pelo prazo de 01 (um) ano a partir da data de apuração, sem acarretar qualquer ônus ou encargo à empresa.
-            </div>
-            <div class="data-local">
-              Toledo/PR, ${dataFormatada}.
-            </div>
-            <div style="margin-top: 30px;">De acordo</div>
-            <div class="assinatura-area">
-              <div class="linha"></div>
-              <div class="assinatura-label">Assinatura do contemplado</div>
-            </div>
-          </div>
-        </body>
-        </html>
-      `);
-        w.document.close();
-        w.print();
+        setTimeout(function() {
+            const w = window.open('', '_blank');
+            w.document.write(`
+                <html>
+                <head>
+                    <title>Declaração de Recebimento de Prêmio - Foz Tintas</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 30px; background: #fff; }
+                        .declaracao-container { max-width: 700px; margin: 0 auto; border: 2px solid #372FA4; border-radius: 12px; padding: 40px 30px; }
+                        .logo { text-align: right; margin-bottom: 20px; }
+                        .logo img { max-width: 180px; }
+                        .titulo { text-align: center; font-size: 1.5rem; font-weight: bold; color: #372FA4; margin-bottom: 10px; }
+                        .subtitulo { text-align: center; font-size: 1.1rem; margin-bottom: 30px; }
+                        .info { margin-bottom: 25px; }
+                        .info strong { display: inline-block; width: 140px; }
+                        .texto { font-size: 1.05rem; margin-bottom: 35px; text-align: justify; }
+                        .assinatura-area { margin-top: 50px; }
+                        .linha { border-bottom: 1px solid #333; width: 350px; margin: 40px auto 0; height: 2em; }
+                        .assinatura-label { text-align: center; margin-top: 8px; font-size: 1rem; }
+                        .data-local { margin: 40px 0 0 0; text-align: left; }
+                    </style>
+                </head>
+                <body>
+                    <div class="declaracao-container">
+                        <div class="logo">
+                            <img src="{{ asset('images/logo.png') }}?t={{ time() }}" alt="Foz Tintas Logo">
+                        </div>
+                        <div class="titulo">DECLARAÇÃO DE RECEBIMENTO DE PRÊMIO</div>
+                        <div class="subtitulo">Promoção Compre e ganhe uma picanha</div>
+                        <div class="info">
+                            <div><strong>Voucher:</strong> ${voucher.voucher_code ?? voucher.numero ?? ''}</div>
+                            <div><strong>Nome:</strong> ${voucher.nome_completo ?? (voucher.dados && voucher.dados.cliente) ?? ''}</div>
+                            <div><strong>CPF/CNPJ:</strong> ${voucher.cpf_cnpj ?? (voucher.dados && voucher.dados.cpf) ?? ''}</div>
+                            <div><strong>Número de Nota:</strong> ${voucher.numero_nota ?? (voucher.dados && voucher.dados.numeroNota) ?? ''}</div>
+                        </div>
+                        <div class="texto">
+                            Para fins legais, declaro ter recebido de <strong>AGFABI COMÉRCIO DE TINTAS LTDA</strong>, inscrita no CNPJ sob o nº 03.053.280/0006-07, na data infra-assinada, o prêmio de uma peça de picanha, referente à campanha <strong>Promoção Compre e ganhe uma picanha</strong>, realizada na cidade de Toledo / PR, de 22 a 27 de setembro de 2025. Declaro ainda que não tive nenhuma despesa com o recebimento da premiação acima, sendo-me entregue, portanto, sem nenhum ônus, conforme previsto no regulamento. Autorizo, também, a inclusão de meu nome, imagem e som de voz para fins de divulgação dos contemplados na promoção, pelo prazo de 01 (um) ano a partir da data de apuração, sem acarretar qualquer ônus ou encargo à empresa.
+                        </div>
+                        <div class="data-local">
+                            Toledo/PR, ${dataFormatada}.
+                        </div>
+                        <div style="margin-top: 30px;">De acordo</div>
+                        <div class="assinatura-area">
+                            <div class="linha"></div>
+                            <div class="assinatura-label">Assinatura do contemplado</div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            w.document.close();
+            setTimeout(function() {
+                w.print();
+            }, 500);
+        }, 500);
+
+        // const w = window.open('', '_blank');
+        // w.document.write(`
+        //     <html>
+        //     <head>
+        //     <title>Declaração de Recebimento de Prêmio - Foz Tintas</title>
+        //     <style>
+        //         body { font-family: Arial, sans-serif; padding: 30px; background: #fff; }
+        //         .declaracao-container { max-width: 700px; margin: 0 auto; border: 2px solid #372FA4; border-radius: 12px; padding: 40px 30px; }
+        //         .logo { text-align: right; margin-bottom: 20px; }
+        //         .logo img { max-width: 180px; }
+        //         .titulo { text-align: center; font-size: 1.5rem; font-weight: bold; color: #372FA4; margin-bottom: 10px; }
+        //         .subtitulo { text-align: center; font-size: 1.1rem; margin-bottom: 30px; }
+        //         .info { margin-bottom: 25px; }
+        //         .info strong { display: inline-block; width: 140px; }
+        //         .texto { font-size: 1.05rem; margin-bottom: 35px; text-align: justify; }
+        //         .assinatura-area { margin-top: 50px; }
+        //         .linha { border-bottom: 1px solid #333; width: 350px; margin: 40px auto 0; height: 2em; }
+        //         .assinatura-label { text-align: center; margin-top: 8px; font-size: 1rem; }
+        //         .data-local { margin: 40px 0 0 0; text-align: left; }
+        //     </style>
+        //     </head>
+        //     <body>
+        //     <div class="declaracao-container">
+        //         <div class="logo">
+        //         <img src="{{ asset('images/logo.png') }}?t={{ time() }}" alt="Foz Tintas Logo">
+        //         </div>
+        //         <div class="titulo">DECLARAÇÃO DE RECEBIMENTO DE PRÊMIO</div>
+        //         <div class="subtitulo">Promoção Compre e ganhe uma picanha</div>
+        //         <div class="info">
+        //         <div><strong>Voucher:</strong> ${voucher.numero}</div>
+        //         <div><strong>Nome:</strong> ${voucher.dados.cliente ?? ''}</div>
+        //         <div><strong>CPF/CNPJ:</strong> ${voucher.dados.cpf ?? ''}</div>
+        //         <div><strong>Número de Nota:</strong> ${voucher.dados.numeroNota ?? ''}</div>
+        //         </div>
+        //         <div class="texto">
+        //         Para fins legais, declaro ter recebido de <strong>AGFABI COMÉRCIO DE TINTAS LTDA</strong>, inscrita no CNPJ sob o nº 03.053.280/0006-07, na data infra-assinada, o prêmio de uma peça de picanha, referente à campanha <strong>Promoção Compre e ganhe uma picanha</strong>, realizada na cidade de Toledo / PR, de 22 a 27 de setembro de 2025. Declaro ainda que não tive nenhuma despesa com o recebimento da premiação acima, sendo-me entregue, portanto, sem nenhum ônus, conforme previsto no regulamento. Autorizo, também, a inclusão de meu nome, imagem e som de voz para fins de divulgação dos contemplados na promoção, pelo prazo de 01 (um) ano a partir da data de apuração, sem acarretar qualquer ônus ou encargo à empresa.
+        //         </div>
+        //         <div class="data-local">
+        //         Toledo/PR, ${dataFormatada}.
+        //         </div>
+        //         <div style="margin-top: 30px;">De acordo</div>
+        //         <div class="assinatura-area">
+        //         <div class="linha"></div>
+        //         <div class="assinatura-label">Assinatura do contemplado</div>
+        //         </div>
+        //     </div>
+        //     </body>
+        //     </html>
+        // `);
+        // w.document.close();
+        // w.print();
     }
 
     // Botões

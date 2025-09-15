@@ -287,7 +287,42 @@
         const ano = hoje.getFullYear();
         const dataFormatada = `${dia} de ${mes} de ${ano}`;
 
+        // Cria o spinner centralizado
+        const spinnerOverlay = document.createElement('div');
+        spinnerOverlay.style.position = 'fixed';
+        spinnerOverlay.style.top = 0;
+        spinnerOverlay.style.left = 0;
+        spinnerOverlay.style.width = '100vw';
+        spinnerOverlay.style.height = '100vh';
+        spinnerOverlay.style.background = 'rgba(255,255,255,0.8)';
+        spinnerOverlay.style.display = 'flex';
+        spinnerOverlay.style.alignItems = 'center';
+        spinnerOverlay.style.justifyContent = 'center';
+        spinnerOverlay.style.zIndex = 9999;
+
+        const spinner = document.createElement('div');
+        spinner.style.width = '60px';
+        spinner.style.height = '60px';
+        spinner.style.border = '6px solid #e0e0ff';
+        spinner.style.borderTop = '6px solid #372FA4';
+        spinner.style.borderRadius = '50%';
+        spinner.style.animation = 'spin 1s linear infinite';
+
+        // Adiciona animação ao spinner
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes spin {
+                0% { transform: rotate(0deg);}
+                100% { transform: rotate(360deg);}
+            }
+        `;
+        document.head.appendChild(style);
+        spinnerOverlay.appendChild(spinner);
+        document.body.appendChild(spinnerOverlay);
+
         setTimeout(function() {
+            document.body.removeChild(spinnerOverlay);
+
             const w = window.open('', '_blank');
             w.document.write(`
                 <html>
@@ -338,10 +373,8 @@
                 </html>
             `);
             w.document.close();
-            // setTimeout(function() {
-                w.print();
-            // }, 1000);
-        }, 1000);
+            w.print();
+        }, 2000);
 
         // const w = window.open('', '_blank');
         // w.document.write(`

@@ -261,7 +261,7 @@
 
 <script>
 function imprimirVoucherEspecifico(voucher) {
-    console.log('Voucher para imprimir:', voucher);
+    
     if (!voucher) return;
 
     // Data extenso
@@ -325,10 +325,10 @@ function imprimirVoucherEspecifico(voucher) {
             </html>
         `);
         w.document.close();
-        setTimeout(function() {
+        // setTimeout(function() {
             w.print();
-        }, 500);
-    }, 500);
+        // }, 1000);
+    }, 1000);
     w.document.close();
     // w.print();
 }

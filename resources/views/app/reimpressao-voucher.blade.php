@@ -338,10 +338,10 @@
                 </html>
             `);
             w.document.close();
-            setTimeout(function() {
+            // setTimeout(function() {
                 w.print();
-            }, 500);
-        }, 500);
+            // }, 1000);
+        }, 1000);
 
         // const w = window.open('', '_blank');
         // w.document.write(`

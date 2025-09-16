@@ -6,6 +6,7 @@ use App\Models\VendasVoucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Collection;
 
 class VendasVoucherController extends Controller
 {
@@ -179,8 +180,65 @@ class VendasVoucherController extends Controller
      */
     public function porNumero($num_doc)
     {
-        $doc = VendasVoucher::whereRaw('CAST(NUM_DOC AS UNSIGNED) = ?', [(int) ltrim($num_doc, '0')])->get();
+        $doc = $this->valida_NF($num_doc);    
         return $doc;
         // return response()->json($vouchers);
+    }
+
+    public function valida_NF(string $numDoc)
+    {
+       // Normaliza o parâmetro
+        $docSemZeros = ltrim($numDoc, '0');
+        if ($docSemZeros === '') {
+            $docSemZeros = '0';
+        }
+        $docPad12 = str_pad($docSemZeros, 12, '0', STR_PAD_LEFT); // ajuste o 12 se sua coluna tiver outro tamanho
+
+        $q = VendasVoucher::query()
+            ->select([
+                'NUM_DOC',
+                'EMPRESA',
+                DB::raw("MIN(CLIENTE) AS CLIENTE"),
+                DB::raw("MIN(CPF_CNPJ_FORMATADO) AS CPF_CNPJ_FORMATADO"),
+                DB::raw("MIN(ESP_DOC) AS ESP_DOC"),
+                DB::raw("GROUP_CONCAT(DISTINCT FORNECEDOR_FANTASIA ORDER BY FORNECEDOR_FANTASIA SEPARATOR ', ') AS FORNECEDORES"),
+                DB::raw("
+                    SUM(CASE WHEN COD_FORNECEDOR='00000003'
+                            THEN CAST(VALOR_LIQUIDO AS DECIMAL(18,2))
+                            ELSE 0.0 END) AS total_00000003
+                "),
+                DB::raw("
+                    SUM(CASE WHEN COD_FORNECEDOR='50001023'
+                            THEN CAST(VALOR_LIQUIDO AS DECIMAL(18,2))
+                            ELSE 0.0 END) AS total_50001023
+                "),
+                DB::raw("MAX(CASE WHEN COD_FORNECEDOR='00000003'  THEN 1 ELSE 0 END) AS has_00000003"),
+                DB::raw("MAX(CASE WHEN COD_FORNECEDOR='50001023'  THEN 1 ELSE 0 END) AS has_50001023"),
+            ])
+            // NUM_DOC tolerante a zeros à esquerda
+            ->where(function($w) use ($docPad12, $docSemZeros) {
+                $w->where(DB::raw("LPAD(NUM_DOC, 12, '0')"), '=', $docPad12)
+                ->orWhere(DB::raw("TRIM(LEADING '0' FROM NUM_DOC)"), '=', $docSemZeros);
+            })
+            // EMPRESA tolerante a zeros à esquerda
+            ->whereIn(DB::raw("LPAD(EMPRESA, 3, '0')"), ['002','003','007','011'])
+            ->groupBy('NUM_DOC','EMPRESA')
+            ->havingRaw('(has_00000003 = 0 OR total_00000003 >= 300)')
+            ->havingRaw('(has_50001023 = 0 OR total_50001023 >= 500)');
+
+        $res = $q->first(); // null se não atender às regras
+
+        if (!$res) {
+            return null;
+        }
+
+        // Garante retorno apenas se pelo menos um dos campos for > 0
+        if (
+            (isset($res->has_00000003) && $res->has_00000003 > 0) ||
+            (isset($res->has_50001023) && $res->has_50001023 > 0)
+        ) {
+            return $res;
+        }
+        
     }
 }

@@ -22,26 +22,41 @@ class VoucherController extends Controller
     public function store(Request $request)
     {
 
-        // Normaliza CPF/CNPJ (só dígitos)
-        $cpfCnpjRaw = preg_replace('/\D/', '', (string) $request->input('cpfCnpj'));
+        $venda = $this->vendasVoucherController->valida_NF($request->input('numeroNota'));
+        
+        if (!$venda) {
+            return response()->json([
+            'ok' => false,
+            'message' => 'Número da nota não encontrado ou não atende aos critérios para geração de voucher.'
+            ], 422);
+        }
 
-        $validated = $request->validate([
-            'numeroNota'   => ['required','string','max:30'],
-            'nomeCompleto' => ['required','string','min:3','max:150'],
-            'cpfCnpj'      => ['required','string', function($attr,$value,$fail) use ($cpfCnpjRaw) {
-            if (!in_array(strlen($cpfCnpjRaw), [11,14])) {
-                $fail('CPF/CNPJ inválido.');
-                return;
-            }
-            // (Opcional) Validação algorítmica de CPF/CNPJ pode ser adicionada aqui
-            }],
-            'loja'         => ['required', Rule::in(['loja007','loja011'])],
-        ],[
-            'numeroNota.unique' => 'Esta nota já gerou um voucher.',
-        ]);
+        // Normaliza CPF/CNPJ (só dígitos)
+        // $cpfCnpjRaw = preg_replace('/\D/', '', (string) $request->input('cpfCnpj'));
+
+        // $validated = $request->validate([
+        //     'numeroNota'   => ['required','string','max:30'],
+        //     'nomeCompleto' => ['required','string','min:3','max:150'],
+        //     'cpfCnpj'      => ['required','string', function($attr,$value,$fail) use ($cpfCnpjRaw) {
+        //     if (!in_array(strlen($cpfCnpjRaw), [11,14])) {
+        //         $fail('CPF/CNPJ inválido.');
+        //         return;
+        //     }
+        //     // (Opcional) Validação algorítmica de CPF/CNPJ pode ser adicionada aqui
+        //     }],
+        //     'loja'         => ['required', Rule::in(['loja007','loja011'])],
+        // ],[
+        //     'numeroNota.unique' => 'Esta nota já gerou um voucher.',
+        // ]);
+
+        $NUM_DOC = $venda->NUM_DOC  ?? '';
+        $EMPRESA = $venda->EMPRESA  ?? '';
+        $CLIENTE = $venda->CLIENTE ?? '';
+        $CPF_CNPJ = $venda->CPF_CNPJ_FORMATADO ?? '';
+        $ESP_DOC = $venda->ESP_DOC  ?? '';
 
         // Verifica se a nota já foi cadastrada
-        if (Voucher::where('numero_nota', $validated['numeroNota'])->exists()) {
+        if (Voucher::where('numero_nota', $NUM_DOC)->exists()) {
             return response()->json([
             'ok' => false,
             'message' => 'Esta nota já gerou um voucher.'
@@ -49,22 +64,22 @@ class VoucherController extends Controller
         }
 
         // Verifica se o CPF/CNPJ já foi cadastrado
-        if (Voucher::where('cpf_cnpj', $cpfCnpjRaw)->exists()) {
+        if (Voucher::where('cpf_cnpj', $CPF_CNPJ)->exists()) {
             return response()->json([
             'ok' => false,
             'message' => 'Este CPF/CNPJ já possui um voucher.'
             ], 422);
         }
 
-        $voucherCode = $this->gerarCodigoVoucher($validated['numeroNota']);
+        $voucherCode = $this->gerarCodigoVoucher($NUM_DOC);
 
         $voucher = null;
-        DB::transaction(function () use (&$voucher, $validated, $cpfCnpjRaw, $voucherCode) {
+        DB::transaction(function () use (&$voucher, $NUM_DOC, $CLIENTE, $CPF_CNPJ, $EMPRESA, $ESP_DOC, $voucherCode) {
             $voucher = Voucher::create([
-            'numero_nota' => $validated['numeroNota'],
-            'nome_completo' => $validated['nomeCompleto'],
-            'cpf_cnpj' => $cpfCnpjRaw,
-            'loja' => $validated['loja'],
+            'numero_nota' => $NUM_DOC,
+            'nome_completo' => $CLIENTE,
+            'cpf_cnpj' => $CPF_CNPJ,
+            'loja' => $EMPRESA,
             'voucher_code' => $voucherCode,
             'gerado_em' => now(),
             ]);
@@ -167,7 +182,7 @@ class VoucherController extends Controller
 
     public function totalLoja007()
     {
-        $total = Voucher::where('loja', 'loja007')->count();
+        $total = Voucher::where('loja', '007')->count();
         return $total;
         // return response()->json([
         //     'loja007' => $total,
@@ -176,7 +191,7 @@ class VoucherController extends Controller
 
     public function totalLoja011()
     {
-        $total = Voucher::where('loja', 'loja011')->count();
+        $total = Voucher::where('loja', '011')->count();
         return $total;
         // return response()->json([
         //     'loja011' => $total,

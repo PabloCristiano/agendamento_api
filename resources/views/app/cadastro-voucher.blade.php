@@ -20,22 +20,6 @@
                     <label for="numeroNota" class="form-label">📄 Número da Nota Fiscal</label>
                     <input type="text" id="numeroNota" name="numeroNota" class="form-input"
                         placeholder="Digite o número da nota fiscal..." maxlength="20" required>
-
-                    <label for="nomeCompleto" class="form-label" style="margin-top:20px;">👤 Nome Completo</label>
-                    <input type="text" id="nomeCompleto" name="nomeCompleto" class="form-input"
-                        placeholder="Digite nome completo..." minlength="3" required>
-
-                    <label for="cpfCnpj" class="form-label" style="margin-top:20px;">🆔 CPF ou CNPJ</label>
-                    <input type="text" id="cpfCnpj" name="cpfCnpj" class="form-input"
-                        placeholder="Digite CPF ou CNPJ..." maxlength="18" required>
-
-                    <label for="loja" class="form-label" style="margin-top:20px;">🏪 Loja</label>
-                    <select id="loja" name="loja" class="form-input" required>
-                        <option value="">Selecione a loja...</option>
-                        <option value="loja007">Av. José João Muraro, 717 - Jardim Porto Alegre - Loja 007</option>
-                        <option value="loja011">R. Rui Barbosa, 998 - Centro - Loja 011</option>
-                    </select>
-
                     <div class="error-message" id="errorMessage"
                         style="
             display: none;
@@ -94,72 +78,9 @@
 </main>
 
 <script>
-    // ======== Utilidades CPF/CNPJ ========
-    function maskCpfCnpj(value) {
-        value = value.replace(/\D/g, '');
-        if (value.length <= 11) {
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        } else {
-            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
-            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
-            value = value.replace(/(\d{4})(\d)/, '$1-$2');
-        }
-        return value;
-    }
-
-    function validarCPF(cpf) {
-        cpf = cpf.replace(/[^\d]+/g, '');
-        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
-        let soma = 0,
-            resto;
-        for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-        resto = (soma * 10) % 11;
-        if (resto === 10 || resto === 11) resto = 0;
-        if (resto !== parseInt(cpf.substring(9, 10))) return false;
-        soma = 0;
-        for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-        resto = (soma * 10) % 11;
-        if (resto === 10 || resto === 11) resto = 0;
-        if (resto !== parseInt(cpf.substring(10, 11))) return false;
-        return true;
-    }
-
-    function validarCNPJ(cnpj) {
-        cnpj = cnpj.replace(/[^\d]+/g, '');
-        if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
-        let tamanho = cnpj.length - 2;
-        let numeros = cnpj.substring(0, tamanho);
-        let digitos = cnpj.substring(tamanho);
-        let soma = 0;
-        let pos = tamanho - 7;
-        for (let i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
-            if (pos < 2) pos = 9;
-        }
-        let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (resultado !== parseInt(digitos.charAt(0))) return false;
-        tamanho = tamanho + 1;
-        numeros = cnpj.substring(0, tamanho);
-        soma = 0;
-        pos = tamanho - 7;
-        for (let i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
-            if (pos < 2) pos = 9;
-        }
-        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (resultado !== parseInt(digitos.charAt(1))) return false;
-        return true;
-    }
-
     // ======== DOM refs ========
     const form = document.getElementById('voucherForm');
     const inputNota = document.getElementById('numeroNota');
-    const inputNome = document.getElementById('nomeCompleto');
-    const inputCpfCnpj = document.getElementById('cpfCnpj');
-    const inputLoja = document.getElementById('loja');
     const errorMessage = document.getElementById('errorMessage');
     const submitBtn = document.getElementById('submitBtn');
     const loadingSpinner = document.getElementById('loadingSpinner');
@@ -170,14 +91,6 @@
         let isValid = false;
         if (input === inputNota) {
             isValid = !!inputNota.value.trim();
-        } else if (input === inputNome) {
-            isValid = inputNome.value.trim().length >= 3;
-        } else if (input === inputCpfCnpj) {
-            const val = inputCpfCnpj.value.trim().replace(/\D/g, '');
-            isValid = (val.length === 11 && validarCPF(inputCpfCnpj.value)) ||
-                (val.length === 14 && validarCNPJ(inputCpfCnpj.value));
-        } else if (input === inputLoja) {
-            isValid = !!inputLoja.value.trim();
         }
         if (isValid) {
             input.classList.remove('error');
@@ -186,44 +99,18 @@
         }
     }
 
-    // Máscara ao digitar CPF/CNPJ
-    inputCpfCnpj.addEventListener('input', (e) => {
-        e.target.value = maskCpfCnpj(e.target.value);
-        hideErrorIfValid(inputCpfCnpj);
-    });
-
     // Esconde erro ao digitar/clicar se válido
     inputNota.addEventListener('input', () => hideErrorIfValid(inputNota));
-    inputNome.addEventListener('input', () => hideErrorIfValid(inputNome));
-    inputLoja.addEventListener('change', () => hideErrorIfValid(inputLoja));
 
-    // Validação mínima do nome no submit
+    // Validação mínima do número da nota no submit
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearUI();
 
         const numeroNota = inputNota.value.trim();
-        const nomeCompleto = inputNome.value.trim();
-        const cpfCnpj = inputCpfCnpj.value.trim();
-        const loja = inputLoja.value.trim();
 
         if (!numeroNota) {
             return uiError('Por favor, digite o número da nota fiscal!', inputNota);
-        }
-        if (nomeCompleto.length < 3) {
-            return uiError('O nome completo deve ter pelo menos 3 caracteres!', inputNome);
-        }
-
-        const onlyNumbers = cpfCnpj.replace(/\D/g, '');
-        let cpfCnpjValido = false;
-        if (onlyNumbers.length === 11) cpfCnpjValido = validarCPF(cpfCnpj);
-        else if (onlyNumbers.length === 14) cpfCnpjValido = validarCNPJ(cpfCnpj);
-
-        if (!cpfCnpj || !cpfCnpjValido) {
-            return uiError('CPF ou CNPJ inválido!', inputCpfCnpj);
-        }
-        if (!loja) {
-            return uiError('Por favor, selecione a loja!', inputLoja);
         }
 
         // CSRF token do meta tag
@@ -247,26 +134,17 @@
                     'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify({
-                    numeroNota,
-                    nomeCompleto,
-                    cpfCnpj,
-                    loja
+                    numeroNota
                 })
             })
             .then(async (res) => {
                 const data = await res.json().catch(() => ({}));
-                console.log('Response data:', data, res);
                 if (!res.ok || !data.ok) {
-                    // Mostra modal de erro customizado
                     showModalErro(data.message || 'Falha ao gerar voucher.');
                     throw new Error(data.message || 'Falha ao gerar voucher.');
                 }
 
-                // Sucesso
                 inputNota.classList.add('success');
-                inputCpfCnpj.classList.add('success');
-                inputLoja.classList.add('success');
-                inputNome.classList.add('success');
 
                 document.getElementById('voucherNumber').textContent = data.voucherNumber;
                 const v = data.dados || {};
@@ -328,7 +206,7 @@
     function clearUI() {
         errorMessage.textContent = '';
         errorMessage.style.display = 'none';
-        [inputNota, inputNome, inputCpfCnpj, inputLoja].forEach(el => el.classList.remove('error', 'success'));
+        [inputNota].forEach(el => el.classList.remove('error', 'success'));
         voucherResult.style.display = 'none';
     }
 
@@ -438,9 +316,6 @@
 
     function novaConsulta() {
         inputNota.value = '';
-        inputNome.value = '';
-        inputCpfCnpj.value = '';
-        inputLoja.value = '';
         clearUI();
         inputNota.focus();
     }

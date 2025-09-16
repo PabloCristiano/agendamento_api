@@ -1,13 +1,12 @@
 @extends('app.index')
 @section('content')
 @section('title', 'Reimpressão de Voucher')
-<!-- CSRF para Laravel (Blade) -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <main>
     <section class="hero">
         <div class="container">
             <h1>REIMPRIMIR VOUCHER</h1>
-            <p>Informe CPF/CNPJ, número da nota fiscal e loja para localizar seu voucher.</p>
+            <p>Informe apenas o número da nota fiscal para localizar seu voucher.</p>
         </div>
     </section>
 
@@ -18,25 +17,10 @@
             <form id="reprintForm" method="POST" novalidate>
                 @csrf
 
-                <div class="row">
-                    <div class="form-group">
-                        <label for="cpfCnpj" class="form-label">🆔 CPF ou CNPJ</label>
-                        <input type="text" id="cpfCnpj" name="cpfCnpj" class="form-input"
-                            placeholder="Digite CPF ou CNPJ..." maxlength="18">
-                    </div>
-                    <div class="form-group">
-                        <label for="numeroNota" class="form-label">📄 Número da Nota Fiscal</label>
-                        <input type="text" id="numeroNota" name="numeroNota" class="form-input"
-                            placeholder="Digite o número da nota..." maxlength="25">
-                    </div>
-                </div>
                 <div class="form-group">
-                    <label for="loja" class="form-label">🏪 Loja</label>
-                    <select id="loja" name="loja" class="form-input">
-                        <option value="">Selecione a loja...</option>
-                        <option value="loja007">Av. José João Muraro, 717 - Jardim Porto Alegre - Loja 007</option>
-                        <option value="loja011">R. Rui Barbosa, 998 - Centro - Loja 011</option>
-                    </select>
+                    <label for="numeroNota" class="form-label">📄 Número da Nota Fiscal</label>
+                    <input type="text" id="numeroNota" name="numeroNota" class="form-input"
+                        placeholder="Digite o número da nota..." maxlength="25">
                 </div>
 
                 <div id="errorMessage" class="error-message"></div>
@@ -67,78 +51,15 @@
         </div>
 
         <div class="alert alert-warning">
-            ⚠️ <strong>Importante:</strong> Informe o CPF ou CNPJ, número da nota fiscal e selecione a loja onde foi
-            feita a compra.
+            ⚠️ <strong>Importante:</strong> Informe apenas o número da nota fiscal.
         </div>
     </section>
 </main>
 
 <script>
-    // ====== Utilidades CPF/CNPJ ======
-    function maskCpfCnpj(value) {
-        value = value.replace(/\D/g, '');
-        if (value.length <= 11) {
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        } else {
-            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
-            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
-            value = value.replace(/(\d{4})(\d)/, '$1-$2');
-        }
-        return value;
-    }
-
-    function validarCPF(cpf) {
-        cpf = cpf.replace(/[^\d]+/g, '');
-        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
-        let soma = 0,
-            resto;
-        for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-        resto = (soma * 10) % 11;
-        if (resto === 10 || resto === 11) resto = 0;
-        if (resto !== parseInt(cpf.substring(9, 10))) return false;
-        soma = 0;
-        for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-        resto = (soma * 10) % 11;
-        if (resto === 10 || resto === 11) resto = 0;
-        if (resto !== parseInt(cpf.substring(10, 11))) return false;
-        return true;
-    }
-
-    function validarCNPJ(cnpj) {
-        cnpj = cnpj.replace(/[^\d]+/g, '');
-        if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
-        let tamanho = cnpj.length - 2;
-        let numeros = cnpj.substring(0, tamanho);
-        let digitos = cnpj.substring(tamanho);
-        let soma = 0;
-        let pos = tamanho - 7;
-        for (let i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
-            if (pos < 2) pos = 9;
-        }
-        let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (resultado !== parseInt(digitos.charAt(0))) return false;
-        tamanho = tamanho + 1;
-        numeros = cnpj.substring(0, tamanho);
-        soma = 0;
-        pos = tamanho - 7;
-        for (let i = tamanho; i >= 1; i--) {
-            soma += numeros.charAt(tamanho - i) * pos--;
-            if (pos < 2) pos = 9;
-        }
-        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-        if (resultado !== parseInt(digitos.charAt(1))) return false;
-        return true;
-    }
-
     // ====== DOM ======
     const reprintForm = document.getElementById('reprintForm');
-    const cpfCnpj = document.getElementById('cpfCnpj');
     const numeroNota = document.getElementById('numeroNota');
-    const loja = document.getElementById('loja');
     const errorMessage = document.getElementById('errorMessage');
     const submitBtn = document.getElementById('submitBtn');
     const loadingSpinner = document.getElementById('loadingSpinner');
@@ -147,9 +68,6 @@
     const voucherInfoEl = document.getElementById('voucherInfo');
     const btnImprimir = document.getElementById('btnImprimir');
     const btnNovaBusca = document.getElementById('btnNovaBusca');
-
-    // Máscara CPF/CNPJ
-    cpfCnpj && cpfCnpj.addEventListener('input', (e) => e.target.value = maskCpfCnpj(e.target.value));
 
     function uiError(message, inputToMark) {
         errorMessage.textContent = message;
@@ -163,7 +81,7 @@
     function limpaErros() {
         errorMessage.textContent = '';
         errorMessage.style.display = 'none';
-        [cpfCnpj, numeroNota, loja].forEach(el => el && el.classList.remove('error', 'success'));
+        numeroNota && numeroNota.classList.remove('error', 'success');
     }
 
     function clearResult() {
@@ -178,20 +96,12 @@
         limpaErros();
         clearResult();
 
-        // Validações
-        const doc = (cpfCnpj.value || '').trim();
+        // Validação
         const nota = (numeroNota.value || '').trim();
-        const lj = (loja.value || '').trim();
 
-        if (!doc || !nota || !lj) {
-            return uiError('Preencha todos os campos: CPF/CNPJ, número da nota e loja.');
+        if (!nota) {
+            return uiError('Preencha o número da nota fiscal.', numeroNota);
         }
-
-        const only = doc.replace(/\D/g, '');
-        let okDoc = false;
-        if (only.length === 11) okDoc = validarCPF(doc);
-        else if (only.length === 14) okDoc = validarCNPJ(doc);
-        if (!okDoc) return uiError('CPF/CNPJ inválido.', cpfCnpj);
 
         // CSRF
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
@@ -205,9 +115,7 @@
 
         try {
             const payload = {
-                cpfCnpj: cpfCnpj.value.trim(),
-                numeroNota: numeroNota.value.trim(),
-                loja: loja.value.trim()
+                numeroNota: numeroNota.value.trim()
             };
 
             const res = await fetch('/reimprimir-voucher', {
@@ -221,7 +129,7 @@
 
             const data = await res.json().catch(() => ({}));
             if (!res.ok || !data || data.ok !== true) {
-                showModalErro(data?.message || 'Voucher não encontrado para os dados informados.');
+                showModalErro(data?.message || 'Voucher não encontrado para o número da nota informado.');
                 throw new Error(data?.message || 'Voucher não encontrado.');
             }
 
@@ -256,7 +164,6 @@
                 block: 'center'
             });
 
-            // Guarda para impressão usando variáveis JavaScript em vez de localStorage
             window.ultimoVoucher = {
                 numero: data.voucherNumber,
                 dados: v,
@@ -277,7 +184,6 @@
         const voucher = window.ultimoVoucher;
         if (!voucher) return;
 
-        // Data extenso
         const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro',
             'outubro', 'novembro', 'dezembro'
         ];
@@ -287,7 +193,6 @@
         const ano = hoje.getFullYear();
         const dataFormatada = `${dia} de ${mes} de ${ano}`;
 
-        // Cria o spinner centralizado
         const spinnerOverlay = document.createElement('div');
         spinnerOverlay.style.position = 'fixed';
         spinnerOverlay.style.top = 0;
@@ -308,7 +213,6 @@
         spinner.style.borderRadius = '50%';
         spinner.style.animation = 'spin 1s linear infinite';
 
-        // Adiciona animação ao spinner
         const style = document.createElement('style');
         style.innerHTML = `
             @keyframes spin {
@@ -320,7 +224,7 @@
         spinnerOverlay.appendChild(spinner);
         document.body.appendChild(spinnerOverlay);
 
-            setTimeout(function() {
+        setTimeout(function() {
             document.body.removeChild(spinnerOverlay);
 
             const w = window.open('', '_blank');
@@ -373,7 +277,6 @@
                 </html>
             `);
             w.document.close();
-            // A impressão será chamada automaticamente após o carregamento da logo (onload do img)
         }, 500);
     }
 
@@ -383,7 +286,7 @@
         reprintForm.reset();
         limpaErros();
         clearResult();
-        cpfCnpj.focus();
+        numeroNota.focus();
     });
 
     // Modal de erro
@@ -435,7 +338,7 @@
     })();
 
     // Autofocus inicial
-    cpfCnpj.focus();
+    numeroNota.focus();
 </script>
 
 @endsection

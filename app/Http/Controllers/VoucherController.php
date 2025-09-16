@@ -137,18 +137,26 @@ class VoucherController extends Controller
 
     public function reimprimir(Request $request)
     {
-       
         
+        
+        // Recebe o parâmetro do request
         $validated = $request->validate([
-            'numeroNota' => ['required', 'string', 'max:30'],
-            'cpfCnpj'    => ['required', 'string'],
+            'numeroNota' => ['required', 'string'],
         ]);
+        $numDoc = $validated['numeroNota'];
 
-        $cpfCnpjRaw = preg_replace('/\D/', '', (string) $validated['cpfCnpj']);
+        $docSemZeros = ltrim($numDoc, '0');
+        if ($docSemZeros === '') {
+            $docSemZeros = '0';
+        }
+        $docPad12 = str_pad($docSemZeros, 12, '0', STR_PAD_LEFT);
 
-        $voucher = Voucher::where('numero_nota', $validated['numeroNota'])
-            ->where('cpf_cnpj', $cpfCnpjRaw)
-            ->first();
+        // Busca considerando tanto com zeros à esquerda quanto sem
+        $voucher = Voucher::where(function($query) use ($numDoc, $docSemZeros, $docPad12) {
+            $query->where('numero_nota', $numDoc)
+              ->orWhere('numero_nota', $docSemZeros)
+              ->orWhere('numero_nota', $docPad12);
+        })->first();
 
         if (!$voucher) {
             return response()->json([

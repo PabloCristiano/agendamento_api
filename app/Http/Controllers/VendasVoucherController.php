@@ -203,16 +203,16 @@ class VendasVoucherController extends Controller
                 DB::raw("MIN(ESP_DOC) AS ESP_DOC"),
                 DB::raw("GROUP_CONCAT(DISTINCT FORNECEDOR_FANTASIA ORDER BY FORNECEDOR_FANTASIA SEPARATOR ', ') AS FORNECEDORES"),
                 DB::raw("
-                    SUM(CASE WHEN COD_FORNECEDOR='00000003'
+                    SUM(CASE WHEN COD_FORNECEDOR='00000017'
                             THEN CAST(VALOR_LIQUIDO AS DECIMAL(18,2))
-                            ELSE 0.0 END) AS total_00000003
+                            ELSE 0.0 END) AS total_00000017
                 "),
                 DB::raw("
                     SUM(CASE WHEN COD_FORNECEDOR='50001023'
                             THEN CAST(VALOR_LIQUIDO AS DECIMAL(18,2))
                             ELSE 0.0 END) AS total_50001023
                 "),
-                DB::raw("MAX(CASE WHEN COD_FORNECEDOR='00000003'  THEN 1 ELSE 0 END) AS has_00000003"),
+                DB::raw("MAX(CASE WHEN COD_FORNECEDOR='00000017'  THEN 1 ELSE 0 END) AS has_00000017"),
                 DB::raw("MAX(CASE WHEN COD_FORNECEDOR='50001023'  THEN 1 ELSE 0 END) AS has_50001023"),
             ])
             // NUM_DOC tolerante a zeros à esquerda
@@ -221,10 +221,10 @@ class VendasVoucherController extends Controller
                 ->orWhere(DB::raw("TRIM(LEADING '0' FROM NUM_DOC)"), '=', $docSemZeros);
             })
             // EMPRESA tolerante a zeros à esquerda
-            ->whereIn(DB::raw("LPAD(EMPRESA, 3, '0')"), ['002','003','007','011'])
+            ->whereIn(DB::raw("LPAD(EMPRESA, 3, '0')"), ['007','011'])
             ->groupBy('NUM_DOC','EMPRESA')
-            ->havingRaw('(has_00000003 = 0 OR total_00000003 >= 300)')
-            ->havingRaw('(has_50001023 = 0 OR total_50001023 >= 500)');
+            ->havingRaw('(has_00000017 = 0 OR total_00000017 >= 500)')
+            ->havingRaw('(has_50001023 = 0 OR total_50001023 >= 300)');
 
         $res = $q->first(); // null se não atender às regras
 
@@ -234,11 +234,11 @@ class VendasVoucherController extends Controller
 
         // Garante retorno apenas se pelo menos um dos campos for > 0
         if (
-            (isset($res->has_00000003) && $res->has_00000003 > 0) ||
+            (isset($res->has_00000017) && $res->has_00000017 > 0) ||
             (isset($res->has_50001023) && $res->has_50001023 > 0)
         ) {
             return $res;
         }
-        
+
     }
 }

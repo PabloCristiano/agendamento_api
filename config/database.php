@@ -82,6 +82,22 @@ return [
             ]) : [],
         ],
 
+        'mysql_remote' => [ // conexão de leitura remota
+            'driver' => 'mariadb',
+            'host' => env('DB_REMOTE_HOST', '127.0.0.1'),
+            'port' => env('DB_REMOTE_PORT', '3306'),
+            'database' => env('DB_REMOTE_DATABASE', ''),
+            'username' => env('DB_REMOTE_USERNAME', 'root'),
+            'password' => env('DB_REMOTE_PASSWORD', ''),
+            'unix_socket' => env('DB_REMOTE_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),

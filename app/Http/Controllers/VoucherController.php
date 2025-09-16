@@ -8,9 +8,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\VendasVoucherController;
 
 class VoucherController extends Controller
 {
+    protected $vendasVoucherController;
+    
+    public function __construct()
+    {
+        $this->vendasVoucherController = new VendasVoucherController();
+    }
+
     public function store(Request $request)
     {
 
@@ -78,6 +86,8 @@ class VoucherController extends Controller
 
     private function gerarCodigoVoucher(string $numeroNota): string
     {
+        // Assegura que a nota existe em vendas_voucher (opcional)
+        // $nota_nf = $this->vendasVoucherController->porNumero($numeroNota);            
         // Gera algo tipo: FOZTINTAS-12345-7G8H
         $sufixo = strtoupper(Str::random(4));
         $code = "FOZTINTAS-{$numeroNota}-{$sufixo}";

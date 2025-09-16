@@ -5,17 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Voucher;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\VendasVoucherController;
 
 
 
 class DashboardController extends Controller
 {
     protected $voucherController;
+    protected $vendasVoucherController;
 
 
     public function __construct()
     {
         $this->voucherController = new VoucherController();
+        $this->vendasVoucherController = new VendasVoucherController();
     }
 
     /**
@@ -26,6 +29,15 @@ class DashboardController extends Controller
         $totalVouchers = $this->voucherController->totalVouchers();
         $loja007Vouchers = $this->voucherController->totalLoja007();
         $loja011Vouchers = $this->voucherController->totalLoja011();
+        // $vendasEmpresas007e011 = $this->vendasVoucherController->vendasEmpresas_007_011();
+        // $clientes = collect($vendasEmpresas007e011)->map(function ($item) {
+        //     return [
+        //     'CLIENTE' => $item['CLIENTE'] ?? null,
+        //     'CPF_CNPJ' => $item['CPF_CNPJ'] ?? null,
+        //     'CPF_CNPJ_FORMATADO' => $item['CPF_CNPJ_FORMATADO'] ?? null,
+        //     ];
+        // });
+        // dd($clientes);
         $vouchers = Voucher::orderBy('id', 'desc')->paginate(5);
         return view('app.dashboard', compact('totalVouchers', 'loja007Vouchers', 'loja011Vouchers', 'vouchers'));
     }

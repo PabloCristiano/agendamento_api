@@ -5,6 +5,7 @@ use App\Http\Controllers\AutcomVendasController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\VendasVoucherController;
 
 Route::get('/', function () {
     return view('foztintas');
@@ -42,5 +43,12 @@ Route::middleware('auth')->group(function () {
     //voucher
     Route::post('/gerar-voucher', [VoucherController::class, 'store'])->name('gerar-voucher.store');
     Route::post('/reimprimir-voucher', [VoucherController::class, 'reimprimir'])->name('reimprimir-voucher.store');
+
+    // Vendas Voucher - API RESTful
+    // Route::get   ('vendas-voucher', [VendasVoucherController::class, 'index']);
+    Route::get   ('vendas-voucher/{empresa}/{num_doc}/{cod_item}', [VendasVoucherController::class, 'show']);
+    // Route::post  ('vendas-voucher', [VendasVoucherController::class, 'store']);
+    // Route::put   ('vendas-voucher/{empresa}/{num_doc}/{cod_item}', [VendasVoucherController::class, 'update']);
+    // Route::delete('vendas-voucher/{empresa}/{num_doc}/{cod_item}', [VendasVoucherController::class, 'destroy']);
 
 });

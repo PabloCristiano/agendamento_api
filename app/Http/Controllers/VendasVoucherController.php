@@ -202,6 +202,7 @@ class VendasVoucherController extends Controller
                 DB::raw("MIN(CPF_CNPJ_FORMATADO) AS CPF_CNPJ_FORMATADO"),
                 DB::raw("MIN(ESP_DOC) AS ESP_DOC"),
                 DB::raw("GROUP_CONCAT(DISTINCT FORNECEDOR_FANTASIA ORDER BY FORNECEDOR_FANTASIA SEPARATOR ', ') AS FORNECEDORES"),
+
                 DB::raw("
                     SUM(CASE WHEN COD_FORNECEDOR='00000017'
                             THEN CAST(VALOR_LIQUIDO AS DECIMAL(18,2))
@@ -212,6 +213,7 @@ class VendasVoucherController extends Controller
                             THEN CAST(VALOR_LIQUIDO AS DECIMAL(18,2))
                             ELSE 0.0 END) AS total_50001023
                 "),
+
                 DB::raw("MAX(CASE WHEN COD_FORNECEDOR='00000017'  THEN 1 ELSE 0 END) AS has_00000017"),
                 DB::raw("MAX(CASE WHEN COD_FORNECEDOR='50001023'  THEN 1 ELSE 0 END) AS has_50001023"),
             ])
@@ -222,7 +224,12 @@ class VendasVoucherController extends Controller
             })
             // EMPRESA tolerante a zeros à esquerda
             ->whereIn(DB::raw("LPAD(EMPRESA, 3, '0')"), ['007','011'])
+
+            // **Novo filtro**: somente documentos cujo ESP_DOC é exatamente 'NF'
+            ->whereRaw("TRIM(ESP_DOC) = 'NF'")
+
             ->groupBy('NUM_DOC','EMPRESA')
+            // pisos — só exigimos se o fornecedor aparecer na nota
             ->havingRaw('(has_00000017 = 0 OR total_00000017 >= 500)')
             ->havingRaw('(has_50001023 = 0 OR total_50001023 >= 300)');
 

@@ -27,13 +27,12 @@ class VoucherController extends Controller
         if (!$venda) {
             return response()->json([
             'ok' => false,
-            'message' => 'Número da nota não encontrado ou não atende aos critérios para geração de voucher.'
+            'message' => 'Número da nota não encontrada ou sem critérios para geração de voucher.'
             ], 422);
         }
 
         // Normaliza CPF/CNPJ (só dígitos)
         // $cpfCnpjRaw = preg_replace('/\D/', '', (string) $request->input('cpfCnpj'));
-
         // $validated = $request->validate([
         //     'numeroNota'   => ['required','string','max:30'],
         //     'nomeCompleto' => ['required','string','min:3','max:150'],

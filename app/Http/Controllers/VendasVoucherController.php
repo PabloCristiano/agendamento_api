@@ -223,7 +223,7 @@ class VendasVoucherController extends Controller
                 ->orWhere(DB::raw("TRIM(LEADING '0' FROM NUM_DOC)"), '=', $docSemZeros);
             })
             // EMPRESA tolerante a zeros à esquerda
-            ->whereIn(DB::raw("LPAD(EMPRESA, 3, '0')"), ['007','011'])
+            ->whereIn(DB::raw("LPAD(EMPRESA, 3, '0')"), ['002','009','003','007','011'])
 
             // **Novo filtro**: somente documentos cujo ESP_DOC é exatamente 'NF'
             ->whereRaw("TRIM(ESP_DOC) = 'NF'")

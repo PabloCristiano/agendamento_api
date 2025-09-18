@@ -328,11 +328,17 @@
     </header>
 
     <main>
-        <section class="hero">
+        <section>
             <div class="container">
-                <h1>PROMOÇÃO COMPRE E GANHE</h1>
-                <div class="picanha-icon">🥩</div>
-                <p>Uma deliciosa picanha te espera!</p>
+            <div style="margin: 30px 0; display: flex; justify-content: center;">
+                <img 
+                src="{{ asset('images/teste.jpg') }}" 
+                alt="Picanha" 
+                width="1900"
+                height="900"
+                style="width: 1900px; height: 900px; object-fit: cover; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.15);"
+                />
+            </div>
             </div>
         </section>
 
